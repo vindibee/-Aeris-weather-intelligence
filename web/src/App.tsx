@@ -12,6 +12,8 @@ const MapPage = lazy(() => import('./pages/dashboard/MapPage'));
 const LocationsPage = lazy(() => import('./pages/dashboard/LocationsPage'));
 const SettingsPage = lazy(() => import('./pages/dashboard/SettingsPage'));
 const SpaceWeather = lazy(() => import('./pages/SpaceWeather'));
+const OAuthDone = lazy(() => import('./pages/OAuthLanding').then((m) => ({ default: m.OAuthDone })));
+const OAuthTelegram = lazy(() => import('./pages/OAuthLanding').then((m) => ({ default: m.OAuthTelegram })));
 
 function Protected({ children }: { children: React.ReactNode }) {
   const user = useApp((s) => s.user);
@@ -68,6 +70,8 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/space-weather" element={<SpaceWeather />} />
+          <Route path="/oauth/done" element={<OAuthDone />} />
+          <Route path="/oauth/telegram" element={<OAuthTelegram />} />
 
           <Route path="/app" element={<Protected><DashboardLayout /></Protected>}>
             <Route index element={<Page><Overview /></Page>} />

@@ -9,6 +9,8 @@ import { useLocationMutations, useRadar } from '../../hooks/useWeather';
 import { api, type GeoFallback, type GridResponse } from '../../lib/api';
 import { codeEmoji, codeInfo, tempColor, windDir, windLabel } from '../../lib/weather';
 import { LoadingPanel, Spinner } from '../../components/ui';
+import { useCityDashboard } from '../../components/city/CityDashboardProvider';
+import FavouriteButton from '../../components/weather/FavouriteButton';
 import type { OverlayKind } from '../../components/weather/WeatherMap';
 
 const WeatherMap = lazy(() => import('../../components/weather/WeatherMap'));
@@ -31,7 +33,7 @@ function PointCard({
 }: { point: { lat: number; lon: number }; onClose: () => void }) {
   const units = useApp((s) => s.units);
   const setPlace = useApp((s) => s.setPlace);
-  const { add } = useLocationMutations();
+  const { openCity } = useCityDashboard();
   const [data, setData] = useState<any>(null);
   const [name, setName] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -132,21 +134,25 @@ function PointCard({
             </div>
           </div>
 
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 space-y-2">
+            {/* Полная сводка — тот же компонент, что открывается с глобуса,
+                из поиска и из избранного. Компактная карточка остаётся, потому
+                что открывать модалку на каждый клик по карте неудобно. */}
             <button
-              onClick={() => setPlace({ name, lat: point.lat, lon: point.lon })}
-              className="flex-1 rounded-xl bg-gradient-to-r from-aqua-400 to-violet-500 py-2.5 text-xs font-bold text-ink-950 transition hover:scale-[1.02]"
+              onClick={() => openCity({ name, lat: point.lat, lon: point.lon })}
+              className="w-full rounded-xl bg-gradient-to-r from-aqua-400 to-violet-500 py-2.5 text-xs font-bold text-ink-950 transition hover:scale-[1.02]"
             >
-              Сделать основной
+              Полная сводка и Одеватор
             </button>
-            <button
-              onClick={() => add.mutate({ name, lat: point.lat, lon: point.lon, country: null, admin1: null } as any)}
-              disabled={add.isPending}
-              className="glass rounded-xl px-3 py-2.5 text-amber-300 transition hover:border-amber-400/40"
-              title="В избранное"
-            >
-              {add.isPending ? <Loader2 size={15} className="animate-spin" /> : <Star size={15} />}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPlace({ name, lat: point.lat, lon: point.lon })}
+                className="glass flex-1 rounded-xl py-2.5 text-xs font-semibold transition hover:border-aqua-400/40"
+              >
+                Сделать основной
+              </button>
+              <FavouriteButton city={{ name, lat: point.lat, lon: point.lon }} />
+            </div>
           </div>
         </>
       ) : (

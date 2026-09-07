@@ -9,12 +9,22 @@ import { useApp, fromGeo } from '../../lib/store';
 import { useGeocode, useSavedLocations } from '../../hooks/useWeather';
 import { api, type GeoResult } from '../../lib/api';
 import { Aurora } from '../../components/Atmosphere';
+import { useCityDashboard } from '../../components/city/CityDashboardProvider';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
-const NAV = [
-  { to: '/app', end: true, icon: LayoutDashboard, label: 'Обзор' },
-  { to: '/app/map', icon: MapIcon, label: 'Карта' },
-  { to: '/app/locations', icon: Star, label: 'Локации' },
-  { to: '/app/settings', icon: Settings, label: 'Настройки' },
+interface NavItem {
+  to: string;
+  end?: boolean;
+  icon: typeof LayoutDashboard;
+  key: string;
+}
+
+const NAV: NavItem[] = [
+  { to: '/app', end: true, icon: LayoutDashboard, key: 'nav.overview' },
+  { to: '/app/map', icon: MapIcon, key: 'nav.map' },
+  { to: '/app/locations', icon: Star, key: 'nav.locations' },
+  { to: '/app/settings', icon: Settings, key: 'nav.settings' },
 ];
 
 /** Раздел живёт вне кабинета, поэтому в навигации стоит отдельным блоком. */
@@ -25,10 +35,12 @@ const EXTERNAL_NAV = [
 /* ---------------- search ---------------- */
 
 function SearchBox({ onDone }: { onDone?: () => void }) {
+  const { t } = useTranslation();
   const [term, setTerm] = useState('');
   const [open, setOpen] = useState(false);
   const [locating, setLocating] = useState(false);
   const setPlace = useApp((s) => s.setPlace);
+  const { openCity } = useCityDashboard();
   const { data: results, isFetching } = useGeocode(term);
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -40,11 +52,18 @@ function SearchBox({ onDone }: { onDone?: () => void }) {
     return () => document.removeEventListener('mousedown', onClick);
   }, []);
 
+  /*
+   * Выбор города в поиске делает две вещи: ставит его текущей точкой кабинета
+   * и сразу показывает полную сводку. Раньше приходилось идти через несколько
+   * экранов, чтобы увидеть индексы и подбор одежды.
+   */
   const pick = (g: GeoResult) => {
-    setPlace(fromGeo(g));
+    const place = fromGeo(g);
+    setPlace(place);
     setTerm('');
     setOpen(false);
     onDone?.();
+    openCity(place);
   };
 
   const locate = () => {
@@ -76,7 +95,7 @@ function SearchBox({ onDone }: { onDone?: () => void }) {
           value={term}
           onChange={(e) => { setTerm(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
-          placeholder="Найти город…"
+          placeholder={t('common.search')}
           className="w-full bg-transparent text-sm outline-none placeholder:text-[var(--text-dim)]"
         />
         {isFetching && <Loader2 size={15} className="animate-spin text-aqua-400" />}
@@ -144,6 +163,7 @@ function SearchBox({ onDone }: { onDone?: () => void }) {
 /* ---------------- sidebar ---------------- */
 
 function SideNav({ onNavigate }: { onNavigate?: () => void }) {
+  const { t } = useTranslation();
   const { data: saved } = useSavedLocations();
   const place = useApp((s) => s.place);
   const setPlace = useApp((s) => s.setPlace);
@@ -174,7 +194,7 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
                   />
                 )}
                 <n.icon size={18} className={isActive ? 'text-aqua-300' : ''} />
-                {n.label}
+                {t(n.key)}
               </>
             )}
           </NavLink>
@@ -271,6 +291,8 @@ export default function DashboardLayout() {
           <div className="flex flex-1 justify-center px-2">
             <SearchBox onDone={() => setMobileOpen(false)} />
           </div>
+
+          <LanguageSwitcher />
 
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}

@@ -10,6 +10,7 @@ import {
 } from '../../hooks/useWeather';
 import { codeEmoji, codeInfo, tempColor } from '../../lib/weather';
 import { LoadingPanel } from '../../components/ui';
+import { useCityDashboard } from '../../components/city/CityDashboardProvider';
 import type { GeoResult, SavedLocation } from '../../lib/api';
 
 function AddDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -100,11 +101,16 @@ export default function LocationsPage() {
   const { data: locations, isLoading } = useSavedLocations();
   const { data: weather, isFetching } = useLocationsWeather(locations);
   const { remove } = useLocationMutations();
+  const { openCity } = useCityDashboard();
   const [adding, setAdding] = useState(false);
 
   if (isLoading) return <LoadingPanel label="Загружаем ваши локации" />;
 
-  const open = (l: SavedLocation) => {
+  // Клик по карточке открывает общую сводку — тот же экран, что с глобуса и
+  // из поиска. Кнопка «Открыть в кабинете» осталась для перехода на обзор.
+  const open = (l: SavedLocation) => openCity(l);
+
+  const openInDashboard = (l: SavedLocation) => {
     setPlace(l);
     navigate('/app');
   };

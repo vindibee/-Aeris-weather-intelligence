@@ -71,6 +71,12 @@ function migrate() {
   const pending = [
     // пол нужен «Одеватору»: он выбирает, какую 3D-модель показать
     ['gender', "ALTER TABLE users ADD COLUMN gender TEXT"],
+    // внешние провайдеры входа: одна учётка может быть связана и с Google,
+    // и с Telegram, поэтому это колонки, а не отдельная таблица провайдеров
+    ['google_id', "ALTER TABLE users ADD COLUMN google_id TEXT"],
+    ['telegram_id', "ALTER TABLE users ADD COLUMN telegram_id TEXT"],
+    ['avatar_url', "ALTER TABLE users ADD COLUMN avatar_url TEXT"],
+    ['language', "ALTER TABLE users ADD COLUMN language TEXT"],
   ];
 
   for (const [name, sql] of pending) {
@@ -78,6 +84,15 @@ function migrate() {
     db.exec(sql);
     console.log(`[db] миграция: users.${name}`);
   }
+
+  // Уникальность внешних идентификаторов. Частичный индекс, потому что у
+  // большинства учёток эти поля пустые, а NULL в SQLite уникальности не мешает.
+  db.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google
+      ON users(google_id) WHERE google_id IS NOT NULL;
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_users_telegram
+      ON users(telegram_id) WHERE telegram_id IS NOT NULL;
+  `);
 }
 
 migrate();
@@ -123,6 +138,13 @@ export const publicUser = (u) => ({
   units: u.units,
   theme: u.theme,
   gender: u.gender ?? null,
+  avatarUrl: u.avatar_url ?? null,
+  language: u.language ?? null,
+  providers: {
+    password: !!u.password_hash,
+    google: !!u.google_id,
+    telegram: !!u.telegram_id,
+  },
   home: u.home_lat != null ? { lat: u.home_lat, lon: u.home_lon, name: u.home_name } : null,
   createdAt: u.created_at,
   lastLoginAt: u.last_login_at,

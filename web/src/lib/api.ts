@@ -7,6 +7,9 @@ export interface User {
   theme: 'dark' | 'light';
   /** Пол для «Одеватора». null — не указан: показываем обе 3D-модели. */
   gender: 'male' | 'female' | null;
+  avatarUrl?: string | null;
+  language?: string | null;
+  providers?: { password: boolean; google: boolean; telegram: boolean };
   home: { lat: number; lon: number; name: string } | null;
   createdAt: string;
   lastLoginAt: string | null;
@@ -241,6 +244,19 @@ export const api = {
     }),
 
   logout: () => request<{ ok: boolean }>('/auth/logout', { method: 'POST' }),
+
+  authProviders: () =>
+    request<{ google: boolean; telegram: boolean; telegramBot: string | null }>('/auth/providers'),
+
+  telegramLogin: (payload: Record<string, unknown>) =>
+    request<{ user: User; token: string }>('/auth/telegram', {
+      method: 'POST', body: JSON.stringify(payload),
+    }),
+
+  telegramCodeLogin: (code: string) =>
+    request<{ user: User; token: string }>('/auth/telegram/code', {
+      method: 'POST', body: JSON.stringify({ code }),
+    }),
 
   me: () => request<{ user: User }>('/auth/me'),
 

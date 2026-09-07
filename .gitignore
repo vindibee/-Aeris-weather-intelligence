@@ -9,3 +9,7 @@ tests/screenshots/
 
 # локальные настройки Claude Code — не для репозитория
 .claude/settings.local.json
+bot/data/
+bot/.env
+__pycache__/
+*.pyc

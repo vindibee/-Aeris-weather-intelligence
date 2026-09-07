@@ -10,6 +10,7 @@ import { cacheStats } from './lib/cache.js';
 import { authRouter } from './routes/auth.js';
 import { weatherRouter } from './routes/weather.js';
 import { spaceRouter } from './routes/space.js';
+import { oauthRouter } from './routes/oauth.js';
 import { locationsRouter } from './routes/locations.js';
 
 const PORT = Number(process.env.PORT ?? 4000);
@@ -71,6 +72,7 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/weather', weatherRouter);
 app.use('/api/space', spaceRouter);
+app.use('/api/auth', oauthRouter);
 app.use('/api/locations', locationsRouter);
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'Маршрут не найден' }));

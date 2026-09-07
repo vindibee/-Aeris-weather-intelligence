@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { api, tokenStore, type User, type GeoResult } from './api';
+import { ApiError, api, tokenStore, type User, type GeoResult } from './api';
 
 interface Place {
   name: string;
@@ -56,6 +56,7 @@ export const useApp = create<AppState>()(
         applyTheme(get().theme);
         try {
           const { user } = await api.me();
+          // сервер — источник истины; сохранённый снимок только что заменён
           set({
             user,
             authReady: true,
@@ -66,9 +67,22 @@ export const useApp = create<AppState>()(
               : get().place,
           });
           applyTheme(user.theme);
-        } catch {
-          tokenStore.clear();
-          set({ user: null, authReady: true });
+        } catch (err) {
+          /*
+           * Разделяем «сессии нет» и «сервер не ответил».
+           *
+           * Раньше любая ошибка — включая обрыв сети или перезапуск API —
+           * вычищала токен, и пользователь оказывался разлогинен на ровном
+           * месте. Сбрасываем сессию только на явный 401.
+           */
+          const status = err instanceof ApiError ? err.status : 0;
+          if (status === 401 || status === 403) {
+            tokenStore.clear();
+            set({ user: null, authReady: true });
+          } else {
+            // оставляем снимок из localStorage: интерфейс не «моргает» выходом
+            set({ authReady: true });
+          }
         }
       },
 
@@ -116,7 +130,16 @@ export const useApp = create<AppState>()(
     }),
     {
       name: 'aeris-app',
-      partialize: (s) => ({ place: s.place, units: s.units, theme: s.theme }),
+      /*
+       * Снимок пользователя тоже кладём в хранилище.
+       *
+       * Токен живёт в httpOnly-cookie и localStorage, но профиль подтягивался
+       * только сетевым запросом: до его ответа шапка успевала отрисоваться как
+       * для гостя. При переходе между разделами это читалось как слетевшая
+       * сессия. Снимок нужен ровно для первого кадра — bootstrap() его сразу
+       * заменяет ответом сервера или чистит на 401.
+       */
+      partialize: (s) => ({ place: s.place, units: s.units, theme: s.theme, user: s.user }),
     }
   )
 );

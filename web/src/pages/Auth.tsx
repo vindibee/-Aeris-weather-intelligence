@@ -5,6 +5,7 @@ import {
   Sun, Mail, Lock, User as UserIcon, ArrowRight, Eye, EyeOff, Zap, AlertCircle, Check,
 } from 'lucide-react';
 import { useApp } from '../lib/store';
+import OAuthButtons from '../components/auth/OAuthButtons';
 import { Aurora } from '../components/Atmosphere';
 import { Spinner } from '../components/ui';
 
@@ -153,6 +154,9 @@ export function LoginPage() {
       <div className="my-6 flex items-center gap-4 text-xs text-[var(--text-dim)]">
         <div className="h-px flex-1 bg-white/10" /> или <div className="h-px flex-1 bg-white/10" />
       </div>
+
+      {/* внешние провайдеры показываются, только если настроены на сервере */}
+      <div className="mb-4"><OAuthButtons /></div>
 
       <button
         onClick={(e) => submit(e, DEMO)}

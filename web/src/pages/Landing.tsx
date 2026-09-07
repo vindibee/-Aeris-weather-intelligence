@@ -8,10 +8,14 @@ import {
 import { Aurora } from '../components/Atmosphere';
 import { GlassCard, SectionTitle, Stat, Spinner } from '../components/ui';
 import { api } from '../lib/api';
+import { useApp } from '../lib/store';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import { codeEmoji, tempColor } from '../lib/weather';
 import type { GlobeMarker } from '../components/Globe3D';
 import type { WorldCity } from '../lib/cities';
-import CityWeatherModal, { type ModalCity } from '../components/weather/CityWeatherModal';
+import { useCityDashboard } from '../components/city/CityDashboardProvider';
+import type { CityRef } from '../components/city/CityDashboard';
 
 const Globe3D = lazy(() => import('../components/Globe3D'));
 
@@ -95,6 +99,8 @@ function useLiveCities() {
 /* ------------------------------------------------------------------ */
 
 function Nav() {
+  const { t } = useTranslation();
+  const user = useApp((s) => s.user);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -129,9 +135,9 @@ function Nav() {
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm font-medium text-[var(--text-dim)] md:flex">
-          {[['Возможности', '#features'], ['Как работает', '#how'], ['Данные', '#data']].map(([label, href]) => (
+          {([['nav.features', '#features'], ['nav.how', '#how'], ['nav.data', '#data']] as const).map(([key, href]) => (
             <a key={href} href={href} className="relative transition hover:text-[var(--text)]">
-              {label}
+              {t(key)}
             </a>
           ))}
           <Link
@@ -139,23 +145,51 @@ function Nav() {
             className="relative flex items-center gap-1.5 transition hover:text-violet-300"
           >
             <Rocket size={14} />
-            Погода в космосе
+            {t('nav.space')}
           </Link>
         </nav>
 
+        {/*
+          Шапка обязана отражать авторизацию.
+
+          Раньше здесь всегда висели «Войти» и «Начать»: возвращаясь на главную
+          из другого раздела, вошедший пользователь видел гостевую панель и
+          считал, что сессия слетела, хотя токен был жив.
+        */}
         <div className="flex items-center gap-2">
-          <Link
-            to="/login"
-            className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-dim)] transition hover:text-[var(--text)]"
-          >
-            Войти
-          </Link>
-          <Link
-            to="/register"
-            className="group relative overflow-hidden rounded-full bg-gradient-to-r from-aqua-400 to-violet-500 px-5 py-2.5 text-sm font-bold text-ink-950 shadow-glow transition hover:scale-[1.03] active:scale-95"
-          >
-            <span className="relative z-10">Начать</span>
-          </Link>
+          <LanguageSwitcher />
+          {user ? (
+            <Link
+              to="/app"
+              className="group flex items-center gap-2.5 rounded-full bg-gradient-to-r from-aqua-400 to-violet-500 py-1.5 pl-1.5 pr-5 text-sm font-bold text-ink-950 shadow-glow transition hover:scale-[1.03] active:scale-95"
+            >
+              <span
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold text-ink-950"
+                style={{
+                  background: `linear-gradient(135deg, hsl(${user.avatarHue} 90% 72%), hsl(${user.avatarHue + 60} 85% 66%))`,
+                }}
+              >
+                {user.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}
+              </span>
+              {t('nav.toDashboard')}
+              <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--text-dim)] transition hover:text-[var(--text)]"
+              >
+                {t('nav.login')}
+              </Link>
+              <Link
+                to="/register"
+                className="group relative overflow-hidden rounded-full bg-gradient-to-r from-aqua-400 to-violet-500 px-5 py-2.5 text-sm font-bold text-ink-950 shadow-glow transition hover:scale-[1.03] active:scale-95"
+              >
+                <span className="relative z-10">{t('nav.start')}</span>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </motion.header>
@@ -167,7 +201,7 @@ function Nav() {
 function Hero({ markers, loading, onCity }: {
   markers: GlobeMarker[];
   loading: boolean;
-  onCity: (c: ModalCity) => void;
+  onCity: (c: CityRef) => void;
 }) {
   // Зум включаем только после того, как пользователь сам взялся за глобус:
   // иначе колесо мыши зумило бы вместо прокрутки страницы.
@@ -540,7 +574,7 @@ function Footer() {
 
 export default function Landing() {
   const { data, loading } = useLiveCities();
-  const [city, setCity] = useState<ModalCity | null>(null);
+  const { openCity } = useCityDashboard();
 
   const markers: GlobeMarker[] = useMemo(
     () =>
@@ -558,7 +592,7 @@ export default function Landing() {
       <div className="noise-overlay" />
       <Nav />
       <main className="relative z-10">
-        <Hero markers={markers} loading={loading} onCity={setCity} />
+        <Hero markers={markers} loading={loading} onCity={openCity} />
         <LiveTicker cities={data} loading={loading} />
         <Features />
         <ParameterCloud />
@@ -566,10 +600,6 @@ export default function Landing() {
         <CTA />
       </main>
       <Footer />
-
-      <AnimatePresence>
-        {city && <CityWeatherModal city={city} onClose={() => setCity(null)} />}
-      </AnimatePresence>
     </div>
   );
 }

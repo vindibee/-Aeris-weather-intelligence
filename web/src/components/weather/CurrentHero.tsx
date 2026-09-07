@@ -3,6 +3,7 @@ import {
   MapPin, Wind, Droplets, Gauge, Eye, Thermometer, CloudRain, Sunrise, Sunset,
   RefreshCw, Star, Check,
 } from 'lucide-react';
+import FavouriteButton from './FavouriteButton';
 import type { ForecastBundle } from '../../lib/api';
 import { codeInfo, codeEmoji, tempColor, windDir, windLabel } from '../../lib/weather';
 import { WeatherFX } from '../Atmosphere';
@@ -84,18 +85,14 @@ export default function CurrentHero({
           </div>
 
           <div className="flex gap-2">
-            <button
-              onClick={onSave}
-              disabled={saved || savePending}
-              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold backdrop-blur-md transition ${
-                saved
-                  ? 'border-lime-300/40 bg-lime-400/15 text-lime-200'
-                  : 'border-white/25 bg-white/10 text-white hover:bg-white/20'
-              }`}
-            >
-              {saved ? <Check size={14} /> : <Star size={14} />}
-              {saved ? 'Сохранено' : 'В избранное'}
-            </button>
+            {/* единый компонент избранного: закрашивается сразу и снимается повторным кликом */}
+            <FavouriteButton
+              city={{
+                name: place.name, country: place.country ?? null,
+                admin1: place.admin1 ?? null, lat: place.lat, lon: place.lon,
+              }}
+              showLabel
+            />
             <button
               onClick={onRefresh}
               className="rounded-full border border-white/25 bg-white/10 p-2 text-white backdrop-blur-md transition hover:bg-white/20"

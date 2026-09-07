@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
-import { Html, Stars, Line, OrbitControls } from '@react-three/drei';
+import { Html, Stars, Line, OrbitControls, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { WORLD_CITIES, type WorldCity } from '../lib/cities';
 import GlobeCanvas, { useDragReporter } from './GlobeCanvas';
@@ -48,24 +48,6 @@ const bodyVertex = /* glsl */ `
   }
 `;
 
-const bodyFragment = /* glsl */ `
-  uniform float uTime;
-  uniform vec3 uDeep;
-  uniform vec3 uMid;
-  uniform vec3 uRim;
-  varying vec3 vNormal;
-  varying vec3 vPos;
-
-  void main() {
-    vec3 viewDir = normalize(cameraPosition - vPos);
-    float fres = pow(1.0 - max(dot(vNormal, viewDir), 0.0), 3.0);
-    float band = smoothstep(-1.0, 1.0, vPos.y * 0.55 + sin(vPos.x * 1.5 + uTime * 0.18) * 0.12);
-    vec3 base = mix(uDeep, uMid, band);
-    vec3 color = mix(base, uRim, fres * 0.7);
-    gl_FragColor = vec4(color, 1.0);
-  }
-`;
-
 const atmoFragment = /* glsl */ `
   uniform vec3 uColor;
   uniform float uTime;
@@ -80,20 +62,32 @@ const atmoFragment = /* glsl */ `
   }
 `;
 
+/**
+ * Земля с настоящей текстурой.
+ *
+ * Раньше поверхность была процедурным градиентом, и метки городов буквально
+ * висели над абстрактным шаром — понять, где Киев, а где океан, было нельзя.
+ * Теперь на сферу натянуты снимки NASA Blue Marble (diffuse + карта нормалей
+ * для рельефа + спекуляр, по которому вода отличается от суши блеском).
+ */
 function Planet() {
-  const bodyRef = useRef<THREE.ShaderMaterial>(null);
   const atmoRef = useRef<THREE.ShaderMaterial>(null);
   const time = useRef(0);
 
-  const bodyUniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uDeep: { value: new THREE.Color('#070f26') },
-      uMid: { value: new THREE.Color('#12305f') },
-      uRim: { value: new THREE.Color('#1f7fd0') },
-    }),
-    []
-  );
+  const [map, normalMap, specularMap] = useTexture([
+    '/textures/earth_atmos_2048.jpg',
+    '/textures/earth_normal_2048.jpg',
+    '/textures/earth_specular_2048.jpg',
+  ]);
+
+  useMemo(() => {
+    for (const t of [map, normalMap, specularMap]) {
+      t.colorSpace = t === map ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+      t.anisotropy = 8;
+    }
+    return null;
+  }, [map, normalMap, specularMap]);
+
   const atmoUniforms = useMemo(
     () => ({ uTime: { value: 0 }, uColor: { value: new THREE.Color('#3fd8f7') } }),
     []
@@ -101,22 +95,26 @@ function Planet() {
 
   useFrame((_, delta) => {
     time.current += step(delta);
-    if (bodyRef.current) bodyRef.current.uniforms.uTime.value = time.current;
     if (atmoRef.current) atmoRef.current.uniforms.uTime.value = time.current;
   });
 
   return (
     <>
       <mesh>
-        <sphereGeometry args={[RADIUS, 64, 64]} />
-        <shaderMaterial
-          ref={bodyRef}
-          vertexShader={bodyVertex}
-          fragmentShader={bodyFragment}
-          uniforms={bodyUniforms}
+        {/* текстура равнопромежуточная, поэтому сетке нужна плотность по долготе */}
+        <sphereGeometry args={[RADIUS, 96, 64]} />
+        <meshStandardMaterial
+          map={map}
+          normalMap={normalMap}
+          normalScale={new THREE.Vector2(0.85, 0.85)}
+          // вода блестит, суша матовая: спекуляр-карта работает как металличность
+          metalnessMap={specularMap}
+          metalness={0.35}
+          roughness={0.78}
         />
       </mesh>
-      <mesh scale={1.13}>
+
+      <mesh scale={1.13} raycast={() => null}>
         <sphereGeometry args={[RADIUS, 48, 48]} />
         <shaderMaterial
           ref={atmoRef}
@@ -181,7 +179,8 @@ function DotShell({ count = 2600 }: { count?: number }) {
           varying float vAlpha;
           void main() {
             float pulse = 0.5 + 0.5 * sin(uTime * 0.9 + aPhase);
-            vAlpha = 0.12 + pulse * 0.32;
+            // поверх настоящей текстуры оболочка должна лишь слегка мерцать
+            vAlpha = 0.04 + pulse * 0.10;
             vec4 mv = modelViewMatrix * vec4(position, 1.0);
             gl_PointSize = (1.1 + pulse * 1.3) * (9.0 / -mv.z);
             gl_Position = projectionMatrix * mv;
@@ -760,13 +759,21 @@ function Scene({
 
       <FocusController target={focus ?? null} onArrive={onFocusArrive} />
 
-      <ambientLight intensity={0.8} />
-      <pointLight position={[5, 3, 5]} intensity={35} color="#7df2ff" />
-      <pointLight position={[-5, -2, -4]} intensity={22} color="#8b5cf6" />
+      {/*
+        Свет под фотографическую текстуру, а не под градиентный шейдер:
+        направленный «солнечный» источник даёт терминатор и рельеф по карте
+        нормалей, холодная подсветка сзади отделяет диск от космоса.
+      */}
+      <ambientLight intensity={0.32} />
+      <directionalLight position={[5, 2.4, 4]} intensity={2.6} color="#fff6e8" />
+      <pointLight position={[-6, -2, -5]} intensity={26} color="#5b8dff" />
       <Stars radius={60} depth={40} count={2600} factor={3.2} saturation={0} fade speed={0.7} />
 
       <group>
-        <Planet />
+        {/* текстуры грузятся асинхронно — до их готовности сцена рисует остальное */}
+        <Suspense fallback={null}>
+          <Planet />
+        </Suspense>
         <DotShell />
         <Graticule />
         {arcs.map((a, i) => <Arc key={i} {...a} />)}
