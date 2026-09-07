@@ -1,0 +1,497 @@
+{
+  "note": "Заготовленные данные на случай, когда внешний API недоступен или живого эндпоинта для планеты не существует в принципе (Юпитер, Венера и прочие). Источники: NASA Planetary Fact Sheet, NASA Science, ESA.",
+  "revision": "2026-09",
+  "solar": {
+    "summary": "Солнце в фазе спада 25-го цикла: вспышечная активность умеренная, геомагнитный фон спокойный.",
+    "flares": [],
+    "storms": [],
+    "kpIndex": 2.3
+  },
+  "planets": [
+    {
+      "id": "mercury",
+      "name": "Меркурий",
+      "kind": "Каменистая планета",
+      "order": 1,
+      "au": 0.387,
+      "radiusKm": 2439.7,
+      "gravity": 3.7,
+      "dayLength": "176 земных суток",
+      "yearLength": "88 земных суток",
+      "moons": 0,
+      "hasLiveEndpoint": false,
+      "tagline": "Раскалённый днём, вымерзающий ночью — рекордный перепад в Солнечной системе.",
+      "metrics": {
+        "tempMean": 167,
+        "tempMin": -173,
+        "tempMax": 427,
+        "pressureBar": 5e-15,
+        "pressureNote": "экзосфера, атмосферы как таковой нет",
+        "windMax": null,
+        "windNote": "переносить нечем — газа слишком мало",
+        "composition": [
+          {
+            "name": "Кислород",
+            "formula": "O₂",
+            "share": 42
+          },
+          {
+            "name": "Натрий",
+            "formula": "Na",
+            "share": 29
+          },
+          {
+            "name": "Водород",
+            "formula": "H₂",
+            "share": 22
+          },
+          {
+            "name": "Гелий",
+            "formula": "He",
+            "share": 6
+          },
+          {
+            "name": "Калий",
+            "formula": "K",
+            "share": 0.5
+          }
+        ]
+      },
+      "highlights": [
+        "Перепад температур за сутки — около 600 °C",
+        "На дне полярных кратеров лежит водяной лёд",
+        "Магнитное поле слабее земного примерно в 100 раз"
+      ],
+      "visual": {
+        "deep": "#2b2620",
+        "mid": "#8c7b68",
+        "rim": "#d9c3a3",
+        "atmosphere": "#c9a97e",
+        "atmoStrength": 0.15,
+        "bands": 0,
+        "mottle": 1,
+        "ring": null
+      }
+    },
+    {
+      "id": "venus",
+      "name": "Венера",
+      "kind": "Каменистая планета",
+      "order": 2,
+      "au": 0.723,
+      "radiusKm": 6051.8,
+      "gravity": 8.87,
+      "dayLength": "243 земных суток",
+      "yearLength": "225 земных суток",
+      "moons": 0,
+      "hasLiveEndpoint": false,
+      "tagline": "Парниковый ад под серной облачностью: свинец здесь плавится на поверхности.",
+      "metrics": {
+        "tempMean": 464,
+        "tempMin": 437,
+        "tempMax": 497,
+        "pressureBar": 92,
+        "pressureNote": "как на глубине 900 м земного океана",
+        "windMax": 100,
+        "windNote": "суперротация облаков: 100 м/с наверху, менее 1 м/с у поверхности",
+        "composition": [
+          {
+            "name": "Углекислый газ",
+            "formula": "CO₂",
+            "share": 96.5
+          },
+          {
+            "name": "Азот",
+            "formula": "N₂",
+            "share": 3.5
+          },
+          {
+            "name": "Диоксид серы",
+            "formula": "SO₂",
+            "share": 0.015
+          },
+          {
+            "name": "Аргон",
+            "formula": "Ar",
+            "share": 0.007
+          }
+        ]
+      },
+      "highlights": [
+        "Самая горячая планета системы — горячее Меркурия",
+        "Облака из капель серной кислоты на высоте 45–70 км",
+        "Вращается в обратную сторону: Солнце восходит на западе"
+      ],
+      "visual": {
+        "deep": "#6b4a1c",
+        "mid": "#d8a959",
+        "rim": "#f6e3b0",
+        "atmosphere": "#ffd88a",
+        "atmoStrength": 0.85,
+        "bands": 3,
+        "mottle": 0.45,
+        "ring": null
+      }
+    },
+    {
+      "id": "earth",
+      "name": "Земля",
+      "kind": "Каменистая планета",
+      "order": 3,
+      "au": 1,
+      "radiusKm": 6371,
+      "gravity": 9.807,
+      "dayLength": "24 часа",
+      "yearLength": "365.25 суток",
+      "moons": 1,
+      "hasLiveEndpoint": true,
+      "tagline": "Единственная точка с живым метеонаблюдением в реальном времени — и она у нас на главном глобусе.",
+      "metrics": {
+        "tempMean": 15,
+        "tempMin": -89.2,
+        "tempMax": 56.7,
+        "pressureBar": 1.014,
+        "pressureNote": "на уровне моря",
+        "windMax": 113,
+        "windNote": "рекорд порыва — 113 м/с, гора Вашингтон и циклон Оливия",
+        "composition": [
+          {
+            "name": "Азот",
+            "formula": "N₂",
+            "share": 78.08
+          },
+          {
+            "name": "Кислород",
+            "formula": "O₂",
+            "share": 20.95
+          },
+          {
+            "name": "Аргон",
+            "formula": "Ar",
+            "share": 0.93
+          },
+          {
+            "name": "Углекислый газ",
+            "formula": "CO₂",
+            "share": 0.042
+          }
+        ]
+      },
+      "highlights": [
+        "Единственная известная планета с жидкой водой на поверхности",
+        "Магнитосфера отводит солнечный ветер и держит атмосферу",
+        "Прогноз по любой точке — на вкладке «Карта»"
+      ],
+      "visual": {
+        "deep": "#123a72",
+        "mid": "#3d93e0",
+        "rim": "#a8e8ff",
+        "atmosphere": "#3fd8f7",
+        "atmoStrength": 1,
+        "bands": 0,
+        "mottle": 0.85,
+        "ring": null
+      }
+    },
+    {
+      "id": "mars",
+      "name": "Марс",
+      "kind": "Каменистая планета",
+      "order": 4,
+      "au": 1.524,
+      "radiusKm": 3389.5,
+      "gravity": 3.71,
+      "dayLength": "24 ч 37 мин",
+      "yearLength": "687 земных суток",
+      "moons": 2,
+      "hasLiveEndpoint": true,
+      "tagline": "Холодная пустыня с пылевыми бурями планетарного масштаба.",
+      "metrics": {
+        "tempMean": -63,
+        "tempMin": -143,
+        "tempMax": 35,
+        "pressureBar": 0.00636,
+        "pressureNote": "6.36 мбар — менее 1% земного",
+        "windMax": 30,
+        "windNote": "обычно 2–10 м/с, в пылевую бурю до 30 м/с",
+        "composition": [
+          {
+            "name": "Углекислый газ",
+            "formula": "CO₂",
+            "share": 95.32
+          },
+          {
+            "name": "Азот",
+            "formula": "N₂",
+            "share": 2.6
+          },
+          {
+            "name": "Аргон",
+            "formula": "Ar",
+            "share": 1.9
+          },
+          {
+            "name": "Кислород",
+            "formula": "O₂",
+            "share": 0.13
+          }
+        ]
+      },
+      "highlights": [
+        "Олимп — вулкан высотой 21 км, втрое выше Эвереста",
+        "Пылевые бури иногда закрывают всю планету на недели",
+        "Метеостанция InSight работала в кратере Элизий до 2022 года"
+      ],
+      "visual": {
+        "deep": "#3a1408",
+        "mid": "#b5522a",
+        "rim": "#f0a878",
+        "atmosphere": "#ff9d6b",
+        "atmoStrength": 0.35,
+        "bands": 0,
+        "mottle": 0.95,
+        "ring": null
+      }
+    },
+    {
+      "id": "jupiter",
+      "name": "Юпитер",
+      "kind": "Газовый гигант",
+      "order": 5,
+      "au": 5.203,
+      "radiusKm": 69911,
+      "gravity": 24.79,
+      "dayLength": "9 ч 56 мин",
+      "yearLength": "11.9 земных лет",
+      "moons": 95,
+      "hasLiveEndpoint": false,
+      "tagline": "Полосатый гигант, где шторм крупнее Земли бушует четвёртое столетие.",
+      "metrics": {
+        "tempMean": -110,
+        "tempMin": -145,
+        "tempMax": -108,
+        "pressureBar": 1,
+        "pressureNote": "поверхности нет — отсчёт от уровня 1 бар в облаках",
+        "windMax": 170,
+        "windNote": "струйные течения до 170 м/с, Большое красное пятно — около 120 м/с",
+        "composition": [
+          {
+            "name": "Водород",
+            "formula": "H₂",
+            "share": 89.8
+          },
+          {
+            "name": "Гелий",
+            "formula": "He",
+            "share": 10.2
+          },
+          {
+            "name": "Метан",
+            "formula": "CH₄",
+            "share": 0.3
+          },
+          {
+            "name": "Аммиак",
+            "formula": "NH₃",
+            "share": 0.026
+          }
+        ]
+      },
+      "highlights": [
+        "Большое красное пятно наблюдают минимум с 1830 года",
+        "Излучает больше энергии, чем получает от Солнца",
+        "Магнитное поле в 20 000 раз мощнее земного"
+      ],
+      "visual": {
+        "deep": "#5a3a20",
+        "mid": "#d9b48a",
+        "rim": "#f6e6cf",
+        "atmosphere": "#ffcf9b",
+        "atmoStrength": 0.55,
+        "bands": 9,
+        "mottle": 0.3,
+        "ring": null
+      }
+    },
+    {
+      "id": "saturn",
+      "name": "Сатурн",
+      "kind": "Газовый гигант",
+      "order": 6,
+      "au": 9.537,
+      "radiusKm": 58232,
+      "gravity": 10.44,
+      "dayLength": "10 ч 42 мин",
+      "yearLength": "29.4 земных лет",
+      "moons": 146,
+      "hasLiveEndpoint": false,
+      "tagline": "Кольца изо льда шириной с четверть расстояния до Луны — и ветры под 500 м/с.",
+      "metrics": {
+        "tempMean": -139,
+        "tempMin": -189,
+        "tempMax": -130,
+        "pressureBar": 1,
+        "pressureNote": "поверхности нет — отсчёт от уровня 1 бар",
+        "windMax": 500,
+        "windNote": "экваториальные струи до 1800 км/ч",
+        "composition": [
+          {
+            "name": "Водород",
+            "formula": "H₂",
+            "share": 96.3
+          },
+          {
+            "name": "Гелий",
+            "formula": "He",
+            "share": 3.25
+          },
+          {
+            "name": "Метан",
+            "formula": "CH₄",
+            "share": 0.45
+          },
+          {
+            "name": "Аммиак",
+            "formula": "NH₃",
+            "share": 0.0125
+          }
+        ]
+      },
+      "highlights": [
+        "Средняя плотность меньше плотности воды",
+        "На северном полюсе — устойчивый шестиугольный вихрь",
+        "Кольца толщиной всего 10–100 метров"
+      ],
+      "visual": {
+        "deep": "#6b5320",
+        "mid": "#e0c890",
+        "rim": "#faf0d4",
+        "atmosphere": "#f6dfa8",
+        "atmoStrength": 0.5,
+        "bands": 7,
+        "mottle": 0.22,
+        "ring": {
+          "inner": 1.35,
+          "outer": 2.25,
+          "color": "#e8d9b4",
+          "tilt": 0.47
+        }
+      }
+    },
+    {
+      "id": "uranus",
+      "name": "Уран",
+      "kind": "Ледяной гигант",
+      "order": 7,
+      "au": 19.191,
+      "radiusKm": 25362,
+      "gravity": 8.87,
+      "dayLength": "17 ч 14 мин",
+      "yearLength": "84 земных года",
+      "moons": 28,
+      "hasLiveEndpoint": false,
+      "tagline": "Планета, лежащая на боку: полюс смотрит на Солнце по 42 года подряд.",
+      "metrics": {
+        "tempMean": -195,
+        "tempMin": -224,
+        "tempMax": -190,
+        "pressureBar": 1,
+        "pressureNote": "поверхности нет — отсчёт от уровня 1 бар",
+        "windMax": 250,
+        "windNote": "до 900 км/ч в средних широтах",
+        "composition": [
+          {
+            "name": "Водород",
+            "formula": "H₂",
+            "share": 82.5
+          },
+          {
+            "name": "Гелий",
+            "formula": "He",
+            "share": 15.2
+          },
+          {
+            "name": "Метан",
+            "formula": "CH₄",
+            "share": 2.3
+          }
+        ]
+      },
+      "highlights": [
+        "Самая холодная зафиксированная температура в системе: −224 °C",
+        "Ось наклонена на 98° — планета катится по орбите боком",
+        "Голубой цвет даёт метан, поглощающий красный свет"
+      ],
+      "visual": {
+        "deep": "#0d3f52",
+        "mid": "#67c8d8",
+        "rim": "#c9f2fa",
+        "atmosphere": "#8fe6f5",
+        "atmoStrength": 0.6,
+        "bands": 4,
+        "mottle": 0.12,
+        "ring": {
+          "inner": 1.4,
+          "outer": 1.75,
+          "color": "#9fd8e6",
+          "tilt": 1.6
+        }
+      }
+    },
+    {
+      "id": "neptune",
+      "name": "Нептун",
+      "kind": "Ледяной гигант",
+      "order": 8,
+      "au": 30.07,
+      "radiusKm": 24622,
+      "gravity": 11.15,
+      "dayLength": "16 ч 06 мин",
+      "yearLength": "165 земных лет",
+      "moons": 16,
+      "hasLiveEndpoint": false,
+      "tagline": "Самые быстрые ветры Солнечной системы — 2100 км/ч на границе вечной ночи.",
+      "metrics": {
+        "tempMean": -201,
+        "tempMin": -223,
+        "tempMax": -195,
+        "pressureBar": 1,
+        "pressureNote": "поверхности нет — отсчёт от уровня 1 бар",
+        "windMax": 600,
+        "windNote": "рекорд системы: до 2100 км/ч",
+        "composition": [
+          {
+            "name": "Водород",
+            "formula": "H₂",
+            "share": 80
+          },
+          {
+            "name": "Гелий",
+            "formula": "He",
+            "share": 19
+          },
+          {
+            "name": "Метан",
+            "formula": "CH₄",
+            "share": 1.5
+          }
+        ]
+      },
+      "highlights": [
+        "Открыт «на кончике пера» — по возмущениям орбиты Урана",
+        "Большое тёмное пятно — шторм размером с Землю",
+        "Получает в 900 раз меньше света, чем Земля"
+      ],
+      "visual": {
+        "deep": "#0a1c5c",
+        "mid": "#2f5fd0",
+        "rim": "#8fb6ff",
+        "atmosphere": "#5b8dff",
+        "atmoStrength": 0.7,
+        "bands": 5,
+        "mottle": 0.2,
+        "ring": null
+      }
+    }
+  ]
+}

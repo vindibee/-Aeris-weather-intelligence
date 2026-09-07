@@ -1,0 +1,26 @@
+{
+  "name": "aeris-weather",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aeris — Weather Intelligence Platform",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c cyan,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev -w server",
+    "dev:web": "npm run dev -w web",
+    "build": "npm run build -w web",
+    "start": "npm run start -w server",
+    "preview": "npm run preview -w web",
+    "test:e2e": "node tests/e2e.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "puppeteer-core": "^23.11.1"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
+  }
+}
