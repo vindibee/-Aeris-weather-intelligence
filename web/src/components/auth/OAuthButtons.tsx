@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { api, tokenStore, type User } from '../../lib/api';
-import { useApp } from '../../lib/store';
+import { api } from '../../lib/api';
 
 /**
  * Вход через внешних провайдеров.
@@ -42,19 +41,20 @@ interface Providers {
 }
 
 /**
- * Виджет Telegram монтируется скриптом с их домена и вызывает глобальный
- * колбэк. Это единственный поддерживаемый способ — обычной ссылкой подпись
- * не получить.
+ * Виджет Telegram монтируется скриптом с их домена.
+ *
+ * Отдать данные он умеет двумя путями: колбэком через `data-onauth` и
+ * редиректом на `data-auth-url`. Колбэк требует, чтобы скрипт Telegram
+ * выполнил содержимое атрибута через eval — а это `'unsafe-eval'` в CSP,
+ * то есть снятая защита от XSS на всём сайте ради одной кнопки. Поэтому
+ * здесь редирект: подпись проверяет сервер, он же ставит сессию.
  */
-function TelegramWidget({ bot, onAuth }: { bot: string; onAuth: (payload: unknown) => void }) {
+function TelegramWidget({ bot }: { bot: string }) {
   const holder = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const node = holder.current;
     if (!node) return;
-
-    const CALLBACK = '__aerisTelegramAuth';
-    (window as unknown as Record<string, unknown>)[CALLBACK] = onAuth;
 
     const script = document.createElement('script');
     script.src = 'https://telegram.org/js/telegram-widget.js?22';
@@ -63,39 +63,23 @@ function TelegramWidget({ bot, onAuth }: { bot: string; onAuth: (payload: unknow
     script.setAttribute('data-size', 'large');
     script.setAttribute('data-radius', '12');
     script.setAttribute('data-request-access', 'write');
-    script.setAttribute('data-onauth', `${CALLBACK}(user)`);
+    script.setAttribute('data-auth-url', `${window.location.origin}/api/auth/telegram/callback`);
     node.appendChild(script);
 
-    return () => {
-      node.replaceChildren();
-      delete (window as unknown as Record<string, unknown>)[CALLBACK];
-    };
-  }, [bot, onAuth]);
+    return () => node.replaceChildren();
+  }, [bot]);
 
   return <div ref={holder} className="flex justify-center" />;
 }
 
 export default function OAuthButtons({ redirect = '/app' }: { redirect?: string }) {
   const { t } = useTranslation();
-  const setUser = useApp((s) => s.setUser);
 
   const { data } = useQuery<Providers>({
     queryKey: ['auth-providers'],
     queryFn: () => api.authProviders(),
     staleTime: 10 * 60_000,
   });
-
-  const onTelegram = async (payload: unknown) => {
-    try {
-      const { user, token } = await api.telegramLogin(payload as Record<string, unknown>);
-      tokenStore.set(token);
-      setUser(user as User);
-      window.location.assign(redirect);
-    } catch (e) {
-      // виджет живёт вне React-дерева, показать ошибку внутри него нечем
-      alert((e as Error).message ?? 'Не удалось войти через Telegram');
-    }
-  };
 
   if (!data?.google && !data?.telegram) return null;
 
@@ -112,7 +96,7 @@ export default function OAuthButtons({ redirect = '/app' }: { redirect?: string 
       )}
 
       {data.telegram && data.telegramBot ? (
-        <TelegramWidget bot={data.telegramBot} onAuth={onTelegram} />
+        <TelegramWidget bot={data.telegramBot} />
       ) : data.telegram ? (
         <div className="glass flex w-full items-center justify-center gap-2.5 rounded-2xl py-3 text-sm font-semibold opacity-60">
           <TelegramIcon />

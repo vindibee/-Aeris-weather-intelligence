@@ -164,6 +164,31 @@ oauthRouter.post('/telegram', (req, res) => {
 });
 
 /**
+ * Приём редиректа от виджета Telegram.
+ *
+ * Виджет умеет два способа отдать данные: колбэком через data-onauth и
+ * редиректом на data-auth-url. Первый требует, чтобы скрипт Telegram выполнил
+ * строку из атрибута через eval — а это значит 'unsafe-eval' в CSP, то есть
+ * снятую защиту от XSS на всём сайте ради одной кнопки. Поэтому используется
+ * редирект: Telegram присылает подписанные поля обычным GET, подпись
+ * проверяется тем же кодом, что и для колбэка.
+ */
+oauthRouter.get('/telegram/callback', (req, res) => {
+  const fail = (message) =>
+    res.redirect(`${WEB_ORIGIN}/login?oauth_error=${encodeURIComponent(message)}`);
+
+  try {
+    const profile = verifyTelegramAuth(req.query ?? {}, BOT_TOKEN);
+    const { user, created } = upsertOAuthUser('telegram', profile);
+    const token = completeLogin(res, user, 'Telegram', created);
+    // токен уходит в хэше: в query он осел бы в логах прокси и в истории
+    res.redirect(`${WEB_ORIGIN}/oauth/done#token=${encodeURIComponent(token)}`);
+  } catch (err) {
+    fail(err?.message ?? 'Не удалось войти через Telegram');
+  }
+});
+
+/**
  * Вход по одноразовому коду из бота.
  *
  * Бот выдаёт пользователю ссылку с кодом; фронт обменивает код на токен. Так
