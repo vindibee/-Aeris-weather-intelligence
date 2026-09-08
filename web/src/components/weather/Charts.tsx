@@ -7,7 +7,7 @@ import {
 } from 'recharts';
 import { Thermometer, CloudRain, Wind, Droplets, Gauge, Sun } from 'lucide-react';
 import type { DayPoint, HourPoint } from '../../hooks/useWeather';
-import { codeShortKey, codeEmoji, codeInfo, tempColor, windDir } from '../../lib/weather';
+import { codeShortKey, codeEmoji, codeInfo, dirLabel, tempColor } from '../../lib/weather';
 
 type Metric = 'temp' | 'precip' | 'wind' | 'humidity' | 'pressure' | 'uv';
 
@@ -42,7 +42,7 @@ function ChartTooltip({ active, payload, label, metric }: any) {
         )}
         {metric === 'wind' && (
           <div className="text-[var(--text-dim)]">
-            порывы: {Math.round(p.gusts ?? 0)} · {windDir(p.dir)}
+            {t('weather.gusts')}: {Math.round(p.gusts ?? 0)} · {dirLabel(t, p.dir)}
           </div>
         )}
         {metric === 'precip' && (

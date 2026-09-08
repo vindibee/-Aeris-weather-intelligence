@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import FavouriteButton from './FavouriteButton';
 import type { ForecastBundle } from '../../lib/api';
-import { codeLabelKey, codeInfo, codeEmoji, tempColor, windDir, windLabel } from '../../lib/weather';
+import { codeLabelKey, codeInfo, codeEmoji, tempColor, dirLabel, windLabelKey } from '../../lib/weather';
 import { WeatherFX } from '../Atmosphere';
 import type { DayPoint } from '../../hooks/useWeather';
 
@@ -39,7 +39,7 @@ export default function CurrentHero({
 
   const chips = [
     { icon: Thermometer, label: t('weather.feelsLike'), value: `${Math.round(feels)}${u.temperature_2m}` },
-    { icon: Wind, label: `Ветер · ${windDir(c.wind_direction_10m as number)}`, value: `${Math.round(Number(c.wind_speed_10m))} ${u.wind_speed_10m}` },
+    { icon: Wind, label: `${t('weather.wind')} · ${dirLabel(t, c.wind_direction_10m as number)}`, value: `${Math.round(Number(c.wind_speed_10m))} ${u.wind_speed_10m}` },
     { icon: Droplets, label: t('weather.humidity'), value: `${c.relative_humidity_2m}%` },
     { icon: Gauge, label: t('weather.pressure'), value: `${Math.round(Number(c.pressure_msl))} ${t('units.hpa')}` },
     { icon: CloudRain, label: t('weather.precip'), value: `${Number(c.precipitation).toFixed(1)} ${u.precipitation}` },
@@ -135,7 +135,7 @@ export default function CurrentHero({
                   <span style={{ color: tempColor(today.min ?? 0, data.units) }}>
                     ↓ {Math.round(today.min ?? 0)}°
                   </span>
-                  <span className="text-white/50">{windLabel(Number(c.wind_speed_10m))}</span>
+                  <span className="text-white/50">{t(windLabelKey(Number(c.wind_speed_10m)))}</span>
                 </div>
               )}
             </div>

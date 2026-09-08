@@ -58,6 +58,16 @@ export const currentLanguage = (): LanguageCode => {
   return isSupported(base) ? base : DEFAULT_LANGUAGE;
 };
 
+/**
+ * Тег локали для Intl и toLocaleString.
+ *
+ * Не хук: нужен и в чистых помощниках, где хук недоступен. Компоненты,
+ * которые форматируют даты, всё равно перерисовываются при смене языка —
+ * они подписаны на него через useTranslation, — поэтому значение читается
+ * свежим.
+ */
+export const localeTag = (): string => currentLanguage();
+
 document.documentElement.lang = currentLanguage();
 
 export default i18n;

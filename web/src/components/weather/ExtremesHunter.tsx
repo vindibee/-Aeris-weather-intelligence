@@ -1,4 +1,5 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
+import { localeTag } from '../../i18n';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -198,7 +199,7 @@ export default function ExtremesHunter() {
                   {best.localTime && (
                     <span className="ml-2 inline-flex items-center gap-1">
                       <Clock size={10} />
-                      местное время {new Date(best.localTime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                      местное время {new Date(best.localTime).toLocaleTimeString(localeTag(), { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
                 </p>

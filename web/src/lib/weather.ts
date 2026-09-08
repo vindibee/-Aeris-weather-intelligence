@@ -130,44 +130,58 @@ export const windColor = (speed: number | null | undefined): string => {
   return '#e879f9';
 };
 
-export const windLabel = (kmh: number): string => {
-  if (kmh < 1) return 'Штиль';
-  if (kmh < 6) return 'Тихий';
-  if (kmh < 12) return 'Лёгкий';
-  if (kmh < 20) return 'Слабый';
-  if (kmh < 29) return 'Умеренный';
-  if (kmh < 39) return 'Свежий';
-  if (kmh < 50) return 'Сильный';
-  if (kmh < 62) return 'Крепкий';
-  if (kmh < 75) return 'Очень крепкий';
-  if (kmh < 89) return 'Шторм';
-  if (kmh < 103) return 'Сильный шторм';
-  if (kmh < 118) return 'Жестокий шторм';
-  return 'Ураган';
+/*
+ * Шкалы возвращают ключи словаря, а не готовый текст.
+ *
+ * Раньше здесь лежали русские подписи, поэтому сила ветра, румбы, уровень UV
+ * и качество воздуха оставались русскими на любом языке.
+ */
+const BEAUFORT = ['calm', 'lightAir', 'lightBreeze', 'gentleBreeze', 'moderateBreeze',
+  'freshBreeze', 'strongBreeze', 'nearGale', 'gale', 'strongGale',
+  'storm', 'violentStorm', 'hurricane'];
+const BEAUFORT_MAX = [1, 6, 12, 20, 29, 39, 50, 62, 75, 89, 103, 118];
+
+export const windLabelKey = (kmh: number): string => {
+  const idx = BEAUFORT_MAX.findIndex((limit) => kmh < limit);
+  return `scale.${BEAUFORT[idx === -1 ? BEAUFORT.length - 1 : idx]}`;
 };
 
-const DIRS = ['С', 'ССВ', 'СВ', 'ВСВ', 'В', 'ВЮВ', 'ЮВ', 'ЮЮВ',
-              'Ю', 'ЮЮЗ', 'ЮЗ', 'ЗЮЗ', 'З', 'ЗСЗ', 'СЗ', 'ССЗ'];
-export const windDir = (deg: number | null | undefined): string =>
-  deg == null ? '—' : DIRS[Math.round((deg % 360) / 22.5) % 16];
+const DIRS = ['n', 'nne', 'ne', 'ene', 'e', 'ese', 'se', 'sse',
+  's', 'ssw', 'sw', 'wsw', 'w', 'wnw', 'nw', 'nnw'];
+
+/** null -> пустой ключ: подпись «—» рисует сам компонент. */
+export const windDirKey = (deg: number | null | undefined): string | null =>
+  deg == null ? null : `scale.${DIRS[Math.round((deg % 360) / 22.5) % 16]}`;
+
+/**
+ * Румб словами. Отдельный помощник, потому что направление отсутствует часто,
+ * и каждый вызывающий иначе повторял бы одну и ту же проверку на null.
+ */
+export const dirLabel = (t: (k: string) => string, deg: number | null | undefined): string => {
+  const key = windDirKey(deg);
+  return key ? t(key) : '—';
+};
+
+const UV_LEVELS = ['uvLow', 'uvModerate', 'uvHigh', 'uvVeryHigh', 'uvExtreme'];
+const UV_MAX = [3, 6, 8, 11];
+const UV_COLORS = ['#4ade80', '#fbbf24', '#fb923c', '#f43f5e', '#a855f7'];
 
 export const uvInfo = (uv: number | null | undefined) => {
   const v = uv ?? 0;
-  if (v < 3) return { label: 'Низкий', color: '#4ade80', pct: (v / 11) * 100 };
-  if (v < 6) return { label: 'Умеренный', color: '#fbbf24', pct: (v / 11) * 100 };
-  if (v < 8) return { label: 'Высокий', color: '#fb923c', pct: (v / 11) * 100 };
-  if (v < 11) return { label: 'Очень высокий', color: '#f43f5e', pct: (v / 11) * 100 };
-  return { label: 'Экстремальный', color: '#a855f7', pct: 100 };
+  const i = UV_MAX.findIndex((limit) => v < limit);
+  const idx = i === -1 ? UV_LEVELS.length - 1 : i;
+  return { labelKey: `scale.${UV_LEVELS[idx]}`, color: UV_COLORS[idx], pct: idx === UV_LEVELS.length - 1 ? 100 : (v / 11) * 100 };
 };
+
+const AQI_LEVELS = ['aqiExcellent', 'aqiGood', 'aqiFair', 'aqiPoor', 'aqiVeryPoor', 'aqiHazardous'];
+const AQI_MAX = [20, 40, 60, 80, 100];
+const AQI_COLORS = ['#4ade80', '#a3e635', '#fbbf24', '#fb923c', '#f43f5e', '#a855f7'];
 
 export const aqiInfo = (aqi: number | null | undefined) => {
   const v = aqi ?? 0;
-  if (v <= 20) return { label: 'Отличный', color: '#4ade80', pct: (v / 100) * 100 };
-  if (v <= 40) return { label: 'Хороший', color: '#a3e635', pct: (v / 100) * 100 };
-  if (v <= 60) return { label: 'Средний', color: '#fbbf24', pct: (v / 100) * 100 };
-  if (v <= 80) return { label: 'Плохой', color: '#fb923c', pct: (v / 100) * 100 };
-  if (v <= 100) return { label: 'Очень плохой', color: '#f43f5e', pct: (v / 100) * 100 };
-  return { label: 'Опасный', color: '#a855f7', pct: 100 };
+  const i = AQI_MAX.findIndex((limit) => v <= limit);
+  const idx = i === -1 ? AQI_LEVELS.length - 1 : i;
+  return { labelKey: `scale.${AQI_LEVELS[idx]}`, color: AQI_COLORS[idx], pct: idx === AQI_LEVELS.length - 1 ? 100 : v };
 };
 
 export const pressureTrend = (series: (number | null)[], idx: number): 'up' | 'down' | 'flat' => {

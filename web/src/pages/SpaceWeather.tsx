@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { localeTag } from '../i18n';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -20,7 +22,7 @@ const temp = (v: number) => `${v > 0 ? '+' : ''}${v} °C`;
 
 /** Диапазон давления охватывает 16 порядков — от экзосферы Меркурия до Венеры. */
 function pressure(bar: number) {
-  if (bar >= 0.01) return `${bar.toLocaleString('ru-RU', { maximumFractionDigits: 3 })} бар`;
+  if (bar >= 0.01) return `${bar.toLocaleString(localeTag(), { maximumFractionDigits: 3 })} бар`;
   if (bar >= 0.0001) return `${(bar * 1000).toFixed(2)} мбар`;
   if (bar === 0) return 'нет';
   const exp = Math.floor(Math.log10(bar));
@@ -101,7 +103,7 @@ function SolarPanel({ data }: { data: SpaceWeatherData }) {
                     {f.classType ?? '—'}
                   </span>
                   <span className="truncate text-[var(--text-dim)]">
-                    {f.peakTime ? new Date(f.peakTime).toLocaleString('ru-RU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'}
+                    {f.peakTime ? new Date(f.peakTime).toLocaleString(localeTag(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'}
                   </span>
                   {f.sourceLocation && (
                     <span className="ml-auto shrink-0 font-mono text-[10px] text-[var(--text-dim)]">{f.sourceLocation}</span>
@@ -128,7 +130,7 @@ function SolarPanel({ data }: { data: SpaceWeatherData }) {
                     Kp {g.maxKp ?? '—'}
                   </span>
                   <span className="truncate text-[var(--text-dim)]">
-                    {g.startTime ? new Date(g.startTime).toLocaleString('ru-RU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'}
+                    {g.startTime ? new Date(g.startTime).toLocaleString(localeTag(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'}
                   </span>
                 </li>
               ))}
@@ -389,7 +391,7 @@ function PlanetModal({ planet, onClose }: { planet: Planet; onClose: () => void 
                 <CircleDot size={13} className="shrink-0 text-amber-300" />
                 <div className="min-w-0">
                   <div className="text-[10px] uppercase text-[var(--text-dim)]">Радиус</div>
-                  <div className="truncate font-semibold">{planet.radiusKm.toLocaleString('ru-RU')} км</div>
+                  <div className="truncate font-semibold">{planet.radiusKm.toLocaleString(localeTag())} км</div>
                 </div>
               </div>
               <div className="flex items-center gap-2 rounded-xl bg-white/5 p-2.5">
@@ -609,7 +611,7 @@ export default function SpaceWeatherPage() {
                 </b>
               </span>
               <span className="glass rounded-full px-3 py-1.5">
-                Обновлено {new Date(data.fetchedAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                Обновлено {new Date(data.fetchedAt).toLocaleTimeString(localeTag(), { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           )}

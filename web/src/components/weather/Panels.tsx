@@ -7,7 +7,7 @@ import {
 import type { ForecastBundle } from '../../lib/api';
 import { Meter } from '../ui';
 import {
-  aqiInfo, comfortIndex, uvInfo, windDir, windLabel, pressureTrend,
+  aqiInfo, comfortIndex, uvInfo, dirLabel, windLabelKey, pressureTrend,
 } from '../../lib/weather';
 import type { DayPoint, HourPoint } from '../../hooks/useWeather';
 
@@ -95,9 +95,9 @@ export function WindCompass({ speed, deg, gusts, unit, delay = 0 }: {
             <span className="font-mono text-4xl font-bold">{Math.round(speed)}</span>
             <span className="text-sm text-[var(--text-dim)]">{unit}</span>
           </div>
-          <div className="mt-1 text-sm font-semibold text-aqua-300">{windLabel(speed)}</div>
+          <div className="mt-1 text-sm font-semibold text-aqua-300">{t(windLabelKey(speed))}</div>
           <div className="mt-3 space-y-1 text-xs text-[var(--text-dim)]">
-            <div>направление · <b className="text-[var(--text)]">{windDir(deg)} ({Math.round(deg)}°)</b></div>
+            <div>{t('weather.direction')} · <b className="text-[var(--text)]">{dirLabel(t, deg)} ({Math.round(deg)}°)</b></div>
             <div>порывы · <b className="text-[var(--text)]">{Math.round(gusts)} {unit}</b></div>
           </div>
         </div>
@@ -176,6 +176,7 @@ const POLLUTANTS: [string, string, number][] = [
 ];
 
 export function AirQuality({ air, delay = 0 }: { air: ForecastBundle['air']; delay?: number }) {
+  const { t } = useTranslation();
   const c = air?.current;
   const aqi = c?.european_aqi ?? null;
   const info = aqiInfo(aqi);
@@ -195,7 +196,7 @@ export function AirQuality({ air, delay = 0 }: { air: ForecastBundle['air']; del
               className="rounded-full px-3.5 py-1.5 text-xs font-bold"
               style={{ background: `${info.color}1f`, color: info.color, border: `1px solid ${info.color}44` }}
             >
-              {info.label}
+              {t(info.labelKey)}
             </div>
           </div>
           <div className="mt-3">
@@ -231,13 +232,14 @@ export function AirQuality({ air, delay = 0 }: { air: ForecastBundle['air']; del
 /* ---------------- uv + comfort + pressure ---------------- */
 
 export function UVPanel({ uv, uvMax, delay = 0 }: { uv: number; uvMax: number; delay?: number }) {
+  const { t } = useTranslation();
   const info = uvInfo(uv);
   return (
     <Panel title="UV-индекс" icon={Sun} delay={delay}>
       <div className="flex items-end justify-between">
         <div className="font-mono text-4xl font-bold" style={{ color: info.color }}>{uv.toFixed(1)}</div>
         <div className="text-right">
-          <div className="text-sm font-bold" style={{ color: info.color }}>{info.label}</div>
+          <div className="text-sm font-bold" style={{ color: info.color }}>{t(info.labelKey)}</div>
           <div className="text-[11px] text-[var(--text-dim)]">макс. сегодня {uvMax.toFixed(1)}</div>
         </div>
       </div>

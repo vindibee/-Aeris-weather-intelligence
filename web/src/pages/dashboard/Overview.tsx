@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { localeTag } from '../../i18n';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Map as MapIcon } from 'lucide-react';
@@ -147,7 +149,7 @@ export default function Overview() {
       </motion.div>
 
       <p className="pb-4 text-center text-xs text-[var(--text-dim)]">
-        Обновлено {new Date(data.fetchedAt).toLocaleTimeString('ru-RU')} · источник Open-Meteo ·
+        Обновлено {new Date(data.fetchedAt).toLocaleTimeString(localeTag())} · источник Open-Meteo ·
         часовой пояс {data.forecast.timezone}
       </p>
     </div>

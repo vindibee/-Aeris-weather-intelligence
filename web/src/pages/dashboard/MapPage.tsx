@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { localeTag } from '../../i18n';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -8,7 +9,7 @@ import {
 import { useApp } from '../../lib/store';
 import { useLocationMutations, useRadar } from '../../hooks/useWeather';
 import { api, type GeoFallback, type GridResponse } from '../../lib/api';
-import { codeLabelKey, codeEmoji, codeInfo, tempColor, windDir, windLabel } from '../../lib/weather';
+import { codeLabelKey, codeEmoji, codeInfo, tempColor, windDirKey, windLabelKey } from '../../lib/weather';
 import { LoadingPanel, Spinner } from '../../components/ui';
 import { useCityDashboard } from '../../components/city/CityDashboardProvider';
 import FavouriteButton from '../../components/weather/FavouriteButton';
@@ -194,7 +195,7 @@ export default function MapPage() {
   }, [radarOn, playing, frames.length]);
 
   const frame = radarOn && frames.length ? frames[Math.min(frameIdx, frames.length - 1)] : null;
-  const frameTime = frame ? new Date(frame.time * 1000).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '';
+  const frameTime = frame ? new Date(frame.time * 1000).toLocaleTimeString(localeTag(), { hour: '2-digit', minute: '2-digit' }) : '';
 
   const stats = useMemo(() => {
     if (!grid?.cells.length) return null;

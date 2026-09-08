@@ -166,12 +166,21 @@ export interface DayPoint {
   isToday: boolean;
 }
 
-const WEEKDAYS = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-const MONTHS = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
-
+/*
+ * Дни недели и месяцы даёт Intl, а не собственные массивы.
+ *
+ * Раньше здесь лежали русские сокращения, из-за чего календарь оставался
+ * русским на всех языках. Intl знает формы для любой локали, включая
+ * родительный падеж месяца там, где он нужен, — и не требует словаря.
+ */
 export function useDaily(data: ForecastBundle | undefined): DayPoint[] {
+  const { i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? 'ru';
+
   return useMemo(() => {
     if (!data) return [];
+    const weekdayFmt = new Intl.DateTimeFormat(lang, { weekday: 'short' });
+    const dateFmt = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short' });
     const d = data.forecast.daily;
     const todayIso = new Date(Date.now() + data.forecast.utc_offset_seconds * 1000)
       .toISOString().slice(0, 10);
@@ -181,8 +190,8 @@ export function useDaily(data: ForecastBundle | undefined): DayPoint[] {
         const dt = new Date(iso);
         return {
           iso,
-          label: `${dt.getDate()} ${MONTHS[dt.getMonth()]}`,
-          weekday: WEEKDAYS[dt.getDay()],
+          label: dateFmt.format(dt),
+          weekday: weekdayFmt.format(dt),
           max: d.temperature_2m_max?.[i] ?? null,
           min: d.temperature_2m_min?.[i] ?? null,
           code: d.weather_code?.[i] ?? null,
@@ -199,5 +208,5 @@ export function useDaily(data: ForecastBundle | undefined): DayPoint[] {
         };
       })
       .filter((day) => day.iso >= todayIso);
-  }, [data]);
+  }, [data, lang]);
 }
