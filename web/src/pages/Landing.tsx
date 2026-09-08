@@ -19,57 +19,39 @@ import type { CityRef } from '../components/city/CityDashboard';
 
 const Globe3D = lazy(() => import('../components/Globe3D'));
 
+/*
+ * Города витрины хранятся ключами словаря, а не готовыми именами: раньше
+ * «Киев» и «Нью-Йорк» оставались русскими на всех языках, включая подписи
+ * маркеров на глобусе.
+ */
 const SHOWCASE = [
-  { name: 'Киев', lat: 50.4547, lon: 30.5238 },
-  { name: 'Лондон', lat: 51.5074, lon: -0.1278 },
-  { name: 'Нью-Йорк', lat: 40.7143, lon: -74.006 },
-  { name: 'Токио', lat: 35.6895, lon: 139.6917 },
-  { name: 'Дубай', lat: 25.2048, lon: 55.2708 },
-  { name: 'Сидней', lat: -33.8688, lon: 151.2093 },
-  { name: 'Рейкьявик', lat: 64.1355, lon: -21.8954 },
-  { name: 'Сан-Паулу', lat: -23.5505, lon: -46.6333 },
+  { key: 'landing.cityKyiv', lat: 50.4547, lon: 30.5238 },
+  { key: 'landing.cityLondon', lat: 51.5074, lon: -0.1278 },
+  { key: 'landing.cityNewYork', lat: 40.7143, lon: -74.006 },
+  { key: 'landing.cityTokyo', lat: 35.6895, lon: 139.6917 },
+  { key: 'landing.cityDubai', lat: 25.2048, lon: 55.2708 },
+  { key: 'landing.citySydney', lat: -33.8688, lon: 151.2093 },
+  { key: 'landing.cityReykjavik', lat: 64.1355, lon: -21.8954 },
+  { key: 'landing.citySaoPaulo', lat: -23.5505, lon: -46.6333 },
 ];
 
 const FEATURES = [
-  {
-    icon: MapIcon, color: '#7df2ff',
-    title: 'Интерактивная метео-карта',
-    text: 'MapLibre GL с векторными слоями: температура, ветер, облачность и давление. Плавный зум, клик по любой точке — мгновенный прогноз.',
-  },
-  {
-    icon: Wind, color: '#a78bfa',
-    title: 'Живые потоки ветра',
-    text: 'Тысячи частиц рисуют реальное поле ветра на canvas поверх карты — направление и скорость видно буквально глазами.',
-  },
-  {
-    icon: Radar, color: '#f472b6',
-    title: 'Радар осадков',
-    text: 'Анимация радарных снимков RainViewer за последние 2 часа с таймлайном и авто-проигрыванием кадров.',
-  },
-  {
-    icon: LineChart, color: '#4ade80',
-    title: 'Почасовая аналитика',
-    text: 'Графики температуры, ощущаемой, вероятности осадков, давления и порывов на 16 суток вперёд.',
-  },
-  {
-    icon: Gauge, color: '#fbbf24',
-    title: 'Полный набор метрик',
-    text: 'UV-индекс, качество воздуха (PM2.5, PM10, NO₂, O₃), точка росы, видимость, CAPE, длина светового дня.',
-  },
-  {
-    icon: Layers, color: '#38bdf8',
-    title: 'Ваши локации',
-    text: 'Сохраняйте города, сравнивайте их бок о бок и переключайтесь одним кликом. Всё синхронизируется с аккаунтом.',
-  },
+  { icon: MapIcon, color: '#7df2ff', k: 'featMap' },
+  { icon: Wind, color: '#a78bfa', k: 'featWind' },
+  { icon: Radar, color: '#f472b6', k: 'featRadar' },
+  { icon: LineChart, color: '#4ade80', k: 'featCharts' },
+  { icon: Gauge, color: '#fbbf24', k: 'featMetrics' },
+  { icon: Layers, color: '#38bdf8', k: 'featPlaces' },
 ];
 
 const STEPS = [
-  { n: '01', title: 'Создайте аккаунт', text: 'Регистрация за 15 секунд. Или войдите в демо-профиль одной кнопкой.' },
-  { n: '02', title: 'Выберите точку', text: 'Поиск по городу, геолокация браузера или клик прямо по глобусу и карте.' },
-  { n: '03', title: 'Наблюдайте', text: 'Кабинет собирает 20+ параметров в живые визуализации и обновляет их автоматически.' },
+  { n: '01', k: 'step1' },
+  { n: '02', k: 'step2' },
+  { n: '03', k: 'step3' },
 ];
 
 function useLiveCities() {
+  const { t } = useTranslation();
   const [data, setData] = useState<{ name: string; lat: number; lon: number; temp: number; code: number; wind: number; isDay: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -80,7 +62,7 @@ function useLiveCities() {
         if (!alive) return;
         setData(
           res.points.map((p: any, i: number) => ({
-            name: SHOWCASE[i].name, lat: SHOWCASE[i].lat, lon: SHOWCASE[i].lon,
+            name: t(SHOWCASE[i].key), lat: SHOWCASE[i].lat, lon: SHOWCASE[i].lon,
             temp: Math.round(p.current?.temperature_2m ?? 0),
             code: p.current?.weather_code ?? 0,
             wind: Math.round(p.current?.wind_speed_10m ?? 0),
@@ -203,6 +185,7 @@ function Hero({ markers, loading, onCity }: {
   loading: boolean;
   onCity: (c: CityRef) => void;
 }) {
+  const { t } = useTranslation();
   // Зум включаем только после того, как пользователь сам взялся за глобус:
   // иначе колесо мыши зумило бы вместо прокрутки страницы.
   const [zoomable, setZoomable] = useState(false);
@@ -230,7 +213,7 @@ function Hero({ markers, loading, onCity }: {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-aqua-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-aqua-400" />
             </span>
-            {loading ? 'Подключаемся к метеосети…' : 'Данные обновлены только что'}
+            {loading ? t('landing.tickerLoading') : t('landing.tickerFresh')}
           </motion.div>
 
           <motion.h1
@@ -239,7 +222,7 @@ function Hero({ markers, loading, onCity }: {
             transition={{ delay: 0.3, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="mt-6 text-balance text-5xl font-extrabold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl"
           >
-            Погода, которую <span className="text-gradient">видно</span>
+            {t('landing.heroTitle')} <span className="text-gradient">{t('landing.heroTitleAccent')}</span>
           </motion.h1>
 
           <motion.p
@@ -369,18 +352,19 @@ function LiveTicker({ cities, loading }: {
 /* ------------------------------------------------------------------ */
 
 function Features() {
+  const { t } = useTranslation();
   return (
     <section id="features" className="relative mx-auto max-w-7xl px-6 py-28 sm:py-36">
       <SectionTitle
         center
-        eyebrow="возможности"
-        title={<>Всё, что происходит <span className="text-gradient">в атмосфере</span></>}
+        eyebrow={t('landing.eyebrowFeatures')}
+        title={<>{t('landing.featuresTitle')} <span className="text-gradient">{t('landing.featuresAccent')}</span></>}
         subtitle="Шесть инструментов, которые превращают сырые метеоданные в понятную картину — без единой таблицы цифр."
       />
 
       <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {FEATURES.map((f, i) => (
-          <GlassCard key={f.title} delay={i * 0.07} className="group relative overflow-hidden p-7">
+          <GlassCard key={f.k} delay={i * 0.07} className="group relative overflow-hidden p-7">
             <div
               className="absolute -right-16 -top-16 h-40 w-40 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-40"
               style={{ background: f.color }}
@@ -391,8 +375,8 @@ function Features() {
             >
               <f.icon size={22} style={{ color: f.color }} />
             </div>
-            <h3 className="relative mt-5 text-xl font-bold">{f.title}</h3>
-            <p className="relative mt-3 text-[15px] leading-relaxed text-[var(--text-dim)]">{f.text}</p>
+            <h3 className="relative mt-5 text-xl font-bold">{t(`landing.${f.k}Title`)}</h3>
+            <p className="relative mt-3 text-[15px] leading-relaxed text-[var(--text-dim)]">{t(`landing.${f.k}Text`)}</p>
           </GlassCard>
         ))}
       </div>
@@ -403,13 +387,14 @@ function Features() {
 /* ------------------------------------------------------------------ */
 
 function ParameterCloud() {
+  const { t } = useTranslation();
   const params = [
-    ['Температура', Thermometer, '#f97316'], ['Ветер', Wind, '#7df2ff'],
-    ['Осадки', Droplets, '#38bdf8'], ['Давление', Gauge, '#a78bfa'],
-    ['UV-индекс', Sun, '#fbbf24'], ['Снег', Snowflake, '#e0f2fe'],
-    ['Облачность', Layers, '#94a3c4'], ['Влажность', Droplets, '#4ade80'],
-    ['Точка росы', Thermometer, '#22d3ee'], ['Порывы', Wind, '#f472b6'],
-    ['Видимость', Globe2, '#c084fc'], ['CAPE', Zap, '#facc15'],
+    [t('weather.temperature'), Thermometer, '#f97316'], [t('weather.wind'), Wind, '#7df2ff'],
+    [t('weather.precip'), Droplets, '#38bdf8'], [t('weather.pressure'), Gauge, '#a78bfa'],
+    [t('weather.uvIndex'), Sun, '#fbbf24'], [t('wmo.snow'), Snowflake, '#e0f2fe'],
+    [t('weather.cloudiness'), Layers, '#94a3c4'], [t('weather.humidity'), Droplets, '#4ade80'],
+    [t('weather.dewPoint'), Thermometer, '#22d3ee'], [t('weather.gusts'), Wind, '#f472b6'],
+    [t('weather.visibility'), Globe2, '#c084fc'], ['CAPE', Zap, '#facc15'],
   ] as const;
 
   return (
@@ -417,16 +402,16 @@ function ParameterCloud() {
       <div className="grid items-center gap-14 lg:grid-cols-2">
         <div>
           <SectionTitle
-            eyebrow="данные"
-            title={<>Открытые источники, <span className="text-gradient">без компромиссов</span></>}
+            eyebrow={t('landing.eyebrowData')}
+            title={<>{t('landing.sourcesTitle')} <span className="text-gradient">{t('landing.sourcesAccent')}</span></>}
             subtitle="Мы агрегируем свободные метеоданные мирового уровня: глобальные модели ICON, GFS и ECMWF через Open-Meteo, радар RainViewer и индекс качества воздуха CAMS."
           />
           <div className="mt-9 space-y-3">
             {[
-              ['Open-Meteo Forecast API', 'ICON / GFS / ECMWF, сетка до 1.5 км'],
-              ['Open-Meteo Air Quality', 'CAMS: PM2.5, PM10, NO₂, SO₂, O₃, пыль'],
-              ['RainViewer Radar', 'радарная мозаика, кадры каждые 10 минут'],
-              ['Open-Meteo Geocoding', 'поиск по 200 000+ населённых пунктов'],
+              ['Open-Meteo Forecast API', t('landing.srcForecast')],
+              ['Open-Meteo Air Quality', t('landing.srcAir')],
+              ['RainViewer Radar', t('landing.srcRadar')],
+              ['Open-Meteo Geocoding', t('landing.srcGeo')],
             ].map(([name, desc], i) => (
               <motion.div
                 key={name}
@@ -473,12 +458,13 @@ function ParameterCloud() {
 /* ------------------------------------------------------------------ */
 
 function HowItWorks() {
+  const { t } = useTranslation();
   return (
     <section id="how" className="relative mx-auto max-w-7xl px-6 py-28">
       <SectionTitle
         center
-        eyebrow="как это работает"
-        title={<>Три шага до <span className="text-gradient">полной картины</span></>}
+        eyebrow={t('landing.eyebrowHow')}
+        title={<>{t('landing.stepsTitle')} <span className="text-gradient">{t('landing.stepsAccent')}</span></>}
       />
       <div className="relative mt-16 grid gap-8 md:grid-cols-3">
         <div className="absolute left-0 right-0 top-14 hidden h-px bg-gradient-to-r from-transparent via-aqua-400/30 to-transparent md:block" />
@@ -495,8 +481,8 @@ function HowItWorks() {
               {s.n}
               <span className="absolute inset-0 rounded-2xl border border-aqua-400/40 animate-pulse-ring" />
             </div>
-            <h3 className="mt-6 text-xl font-bold">{s.title}</h3>
-            <p className="mt-3 text-[15px] leading-relaxed text-[var(--text-dim)]">{s.text}</p>
+            <h3 className="mt-6 text-xl font-bold">{t(`landing.${s.k}Title`)}</h3>
+            <p className="mt-3 text-[15px] leading-relaxed text-[var(--text-dim)]">{t(`landing.${s.k}Text`)}</p>
           </motion.div>
         ))}
       </div>
@@ -507,6 +493,7 @@ function HowItWorks() {
 /* ------------------------------------------------------------------ */
 
 function CTA() {
+  const { t } = useTranslation();
   return (
     <section className="relative mx-auto max-w-5xl px-6 pb-32">
       <motion.div
@@ -521,21 +508,21 @@ function CTA() {
 
         <Sparkles className="relative mx-auto text-aqua-300" size={30} />
         <h2 className="relative mt-6 text-balance text-3xl font-extrabold leading-tight sm:text-5xl">
-          Атмосфера ждёт вас
+          {t('landing.ctaTitle')}
         </h2>
         <p className="relative mx-auto mt-5 max-w-xl text-[var(--text-dim)]">
-          Бесплатно, без карты и лимитов. Загляните в демо-кабинет — он уже наполнен городами.
+          {t('landing.ctaText')}
         </p>
         <div className="relative mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
             to="/register"
             className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-aqua-400 to-violet-500 px-9 py-4 font-bold text-ink-950 shadow-glow transition hover:scale-[1.04] active:scale-95"
           >
-            Создать аккаунт
+            {t('landing.ctaCreate')}
             <ArrowRight size={19} className="transition-transform group-hover:translate-x-1.5" />
           </Link>
           <Link to="/login" className="glass rounded-full px-9 py-4 font-semibold transition hover:border-aqua-400/40">
-            Войти в демо
+            {t('landing.ctaDemo')}
           </Link>
         </div>
         <p className="relative mt-6 font-mono text-xs text-[var(--text-dim)]">
@@ -547,6 +534,7 @@ function CTA() {
 }
 
 function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="relative border-t border-white/8 px-6 py-12">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 sm:flex-row">
@@ -556,7 +544,7 @@ function Footer() {
           </div>
           <div>
             <div className="font-bold">Aeris</div>
-            <div className="text-xs text-[var(--text-dim)]">© 2026 · Weather Intelligence Platform</div>
+            <div className="text-xs text-[var(--text-dim)]">{t('landing.footer')}</div>
           </div>
         </div>
         <div className="flex items-center gap-6 text-sm text-[var(--text-dim)]">
