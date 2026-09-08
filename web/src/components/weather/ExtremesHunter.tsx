@@ -22,10 +22,11 @@ const Globe3D = lazy(() => import('../Globe3D'));
  * API для второго не существует.
  */
 
-const KINDS: { key: ExtremeKind; label: string; icon: typeof Flame; color: string; hint: string }[] = [
-  { key: 'hot', label: 'Самое жаркое', icon: Flame, color: '#fb923c', hint: 'максимум температуры' },
-  { key: 'cold', label: 'Самое холодное', icon: Snowflake, color: '#7dd3fc', hint: 'минимум температуры' },
-  { key: 'wind', label: 'Самое ветреное', icon: Wind, color: '#a78bfa', hint: 'максимум порывов' },
+/* Константа вне React: храним ключи, текст берём при отрисовке. */
+const KINDS: { key: ExtremeKind; labelKey: string; icon: typeof Flame; color: string; hintKey: string }[] = [
+  { key: 'hot', labelKey: 'extremes.hot', icon: Flame, color: '#fb923c', hintKey: 'extremes.hotHint' },
+  { key: 'cold', labelKey: 'extremes.cold', icon: Snowflake, color: '#7dd3fc', hintKey: 'extremes.coldHint' },
+  { key: 'wind', labelKey: 'extremes.wind', icon: Wind, color: '#a78bfa', hintKey: 'extremes.windHint' },
 ];
 
 export default function ExtremesHunter() {
@@ -68,9 +69,9 @@ export default function ExtremesHunter() {
   return (
     <section className="glass overflow-hidden rounded-[2rem] p-5 sm:p-6">
       <div className="flex flex-wrap items-baseline gap-3">
-        <h2 className="text-lg font-extrabold tracking-tight">Охотник за экстремумами</h2>
+        <h2 className="text-lg font-extrabold tracking-tight">{t('extremes.title')}</h2>
         <span className="text-xs text-[var(--text-dim)]">
-          где на планете прямо сейчас предел
+          {t('extremes.subtitle')}
         </span>
       </div>
 
@@ -84,14 +85,14 @@ export default function ExtremesHunter() {
               showCities={false}
               enableZoom
               focus={focus}
-              hint={kind ? false : 'Выберите экстремум справа'}
+              hint={kind ? false : t('extremes.selectHint')}
             />
           </Suspense>
 
           {isFetching && (
             <div className="glass pointer-events-none absolute left-1/2 top-3 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold">
               <Loader2 size={13} className="animate-spin text-aqua-400" />
-              Сканируем опорную сеть…
+              {t('extremes.scanning')}
             </div>
           )}
         </div>
@@ -111,8 +112,8 @@ export default function ExtremesHunter() {
                   style={on ? { borderColor: `${k.color}66`, boxShadow: `0 0 24px -12px ${k.color}` } : undefined}
                 >
                   <k.icon size={18} style={{ color: k.color }} />
-                  <span className="text-xs font-bold leading-tight">{k.label}</span>
-                  <span className="text-[10px] text-[var(--text-dim)]">{k.hint}</span>
+                  <span className="text-xs font-bold leading-tight">{t(k.labelKey)}</span>
+                  <span className="text-[10px] text-[var(--text-dim)]">{t(k.hintKey)}</span>
                 </button>
               );
             })}
@@ -132,7 +133,7 @@ export default function ExtremesHunter() {
 
             {kind && isFetching && !best && (
               <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <LoadingPanel label="Ищем экстремум" />
+                <LoadingPanel label={t('extremes.searching')} />
               </motion.div>
             )}
 
@@ -142,7 +143,7 @@ export default function ExtremesHunter() {
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="mt-5 rounded-2xl border border-rose-400/25 bg-rose-500/5 p-4 text-sm text-rose-200"
               >
-                {(error as Error).message ?? 'Не удалось получить данные'}
+                {(error as Error).message ?? t('extremes.failed')}
               </motion.p>
             )}
 
@@ -162,7 +163,7 @@ export default function ExtremesHunter() {
                       <h3 className="truncate text-lg font-extrabold">{best.name}</h3>
                       {best.isGrid && (
                         <span className="shrink-0 rounded-full bg-white/8 px-2 py-0.5 text-[9px] uppercase tracking-wider text-[var(--text-dim)]">
-                          узел сетки
+                          {t('extremes.gridNode')}
                         </span>
                       )}
                     </div>
@@ -175,19 +176,19 @@ export default function ExtremesHunter() {
 
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                   <div className="rounded-xl bg-white/5 py-2">
-                    <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">Температура</div>
+                    <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">{t('weather.temperature')}</div>
                     <div className="mt-0.5 font-mono text-lg font-bold" style={{ color: tempColor(best.temp, units) }}>
                       {Math.round(best.temp)}{tempUnit}
                     </div>
                   </div>
                   <div className="rounded-xl bg-white/5 py-2">
-                    <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">Порывы</div>
+                    <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">{t('weather.gusts')}</div>
                     <div className="mt-0.5 font-mono text-lg font-bold">
                       {best.gusts == null ? '—' : Math.round(best.gusts)}
                     </div>
                   </div>
                   <div className="rounded-xl bg-white/5 py-2">
-                    <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">Влажность</div>
+                    <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">{t('weather.humidity')}</div>
                     <div className="mt-0.5 font-mono text-lg font-bold">
                       {best.humidity == null ? '—' : `${Math.round(best.humidity)}%`}
                     </div>
@@ -199,7 +200,7 @@ export default function ExtremesHunter() {
                   {best.localTime && (
                     <span className="ml-2 inline-flex items-center gap-1">
                       <Clock size={10} />
-                      местное время {new Date(best.localTime).toLocaleTimeString(localeTag(), { hour: '2-digit', minute: '2-digit' })}
+                      {t('dash.localTime')} {new Date(best.localTime).toLocaleTimeString(localeTag(), { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
                 </p>
@@ -216,19 +217,19 @@ export default function ExtremesHunter() {
                     className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-aqua-400 to-violet-500 px-3.5 py-2 text-xs font-bold text-ink-950 transition hover:scale-[1.03] active:scale-95"
                   >
                     <Crosshair size={13} />
-                    Смотреть прогноз
+                    {t('extremes.seeForecast')}
                     <ArrowRight size={12} />
                   </button>
                   {!!data.runnersUp.length && (
                     <span className="text-[11px] text-[var(--text-dim)]">
-                      следом: {data.runnersUp.slice(0, 2).map((r) => r.name).join(', ')}
+                      {t('extremes.runnersUp')}: {data.runnersUp.slice(0, 2).map((r) => r.name).join(', ')}
                     </span>
                   )}
                 </div>
 
                 <p className="mt-3 flex items-start gap-1.5 text-[11px] leading-snug text-[var(--text-dim)]">
                   <Info size={11} className="mt-0.5 shrink-0" />
-                  {data.note}: опрошено {data.scanned} из {data.requested} точек.
+                  {data.note}: {t('extremes.scanNote', { scanned: data.scanned, requested: data.requested })}.
                 </p>
               </motion.div>
             )}

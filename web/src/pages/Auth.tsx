@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -96,6 +97,7 @@ function ErrorBanner({ error }: { error: string | null }) {
 /* ------------------------------------------------------------------ */
 
 export function LoginPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const login = useApp((s) => s.login);
   const user = useApp((s) => s.user);
@@ -118,20 +120,20 @@ export function LoginPage() {
       await login(creds?.email ?? email, creds?.password ?? password);
       navigate('/app', { replace: true });
     } catch (err: any) {
-      setError(err?.message ?? 'Не удалось войти');
+      setError(err?.message ?? t('auth.loginFailed'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AuthShell title="С возвращением" subtitle="Войдите, чтобы открыть свой метео-кабинет">
+    <AuthShell title={t('auth.welcomeBack')} subtitle={t('auth.loginSubtitle')}>
       <form onSubmit={submit} className="mt-8 space-y-4">
         <Field icon={Mail} type="email" value={email} onChange={setEmail}
                placeholder="you@example.com" autoComplete="email" />
         <Field
           icon={Lock} type={show ? 'text' : 'password'} value={password} onChange={setPassword}
-          placeholder="Пароль" autoComplete="current-password"
+          placeholder={t('auth.password')} autoComplete="current-password"
           right={
             <button type="button" onClick={() => setShow((s) => !s)}
                     className="text-[var(--text-dim)] transition hover:text-aqua-300">
@@ -147,7 +149,7 @@ export function LoginPage() {
           disabled={loading}
           className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-aqua-400 to-violet-500 py-3.5 font-bold text-ink-950 shadow-glow transition hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
         >
-          {loading ? <Spinner size={19} /> : <>Войти <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" /></>}
+          {loading ? <Spinner size={19} /> : <>{t('auth.signIn')} <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" /></>}
         </button>
       </form>
 
@@ -164,7 +166,7 @@ export function LoginPage() {
         className="glass flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 font-semibold transition hover:border-amber-400/40 hover:bg-amber-400/5 disabled:opacity-60"
       >
         <Zap size={17} className="text-amber-400" />
-        Войти в демо-аккаунт
+        {t('auth.demoLogin')}
       </button>
 
       <p className="mt-3 text-center font-mono text-[11px] text-[var(--text-dim)]">
@@ -172,9 +174,9 @@ export function LoginPage() {
       </p>
 
       <p className="mt-7 text-center text-sm text-[var(--text-dim)]">
-        Нет аккаунта?{' '}
+        {t('auth.noAccount')}{' '}
         <Link to="/register" className="font-semibold text-aqua-300 transition hover:text-aqua-200">
-          Зарегистрироваться
+          {t('auth.register')}
         </Link>
       </p>
     </AuthShell>
@@ -183,13 +185,15 @@ export function LoginPage() {
 
 /* ------------------------------------------------------------------ */
 
+/* Константа вне React: храним ключи, текст берём при отрисовке. */
 const rules = [
-  { test: (p: string) => p.length >= 8, label: 'Минимум 8 символов' },
-  { test: (p: string) => /[a-zA-Zа-яА-Я]/.test(p), label: 'Есть буква' },
-  { test: (p: string) => /\d/.test(p), label: 'Есть цифра' },
+  { test: (p: string) => p.length >= 8, labelKey: 'auth.min8' },
+  { test: (p: string) => /[a-zA-Zа-яА-Я]/.test(p), labelKey: 'auth.hasLetter' },
+  { test: (p: string) => /\d/.test(p), labelKey: 'auth.hasDigit' },
 ];
 
 export function RegisterPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const register = useApp((s) => s.register);
   const user = useApp((s) => s.user);
@@ -216,22 +220,22 @@ export function RegisterPage() {
       await register(name, email, password);
       navigate('/app', { replace: true });
     } catch (err: any) {
-      setError(err?.message ?? 'Не удалось создать аккаунт');
+      setError(err?.message ?? t('auth.registerFailed'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AuthShell title="Создать аккаунт" subtitle="15 секунд — и метеоплатформа ваша">
+    <AuthShell title={t('auth.signUp')} subtitle={t('auth.signUpSubtitle')}>
       <form onSubmit={submit} className="mt-8 space-y-4">
         <Field icon={UserIcon} type="text" value={name} onChange={setName}
-               placeholder="Как вас зовут" autoComplete="name" />
+               placeholder={t('auth.yourName')} autoComplete="name" />
         <Field icon={Mail} type="email" value={email} onChange={setEmail}
                placeholder="you@example.com" autoComplete="email" />
         <Field
           icon={Lock} type={show ? 'text' : 'password'} value={password} onChange={setPassword}
-          placeholder="Придумайте пароль" autoComplete="new-password"
+          placeholder={t('auth.createPassword')} autoComplete="new-password"
           right={
             <button type="button" onClick={() => setShow((s) => !s)}
                     className="text-[var(--text-dim)] transition hover:text-aqua-300">
@@ -264,10 +268,10 @@ export function RegisterPage() {
                 {rules.map((r) => {
                   const ok = r.test(password);
                   return (
-                    <div key={r.label}
+                    <div key={r.labelKey}
                          className={`flex items-center gap-2 text-xs transition ${ok ? 'text-lime-400' : 'text-[var(--text-dim)]'}`}>
                       <Check size={12} className={ok ? 'opacity-100' : 'opacity-30'} />
-                      {r.label}
+                      {t(r.labelKey)}
                     </div>
                   );
                 })}
@@ -288,7 +292,7 @@ export function RegisterPage() {
       </form>
 
       <p className="mt-7 text-center text-sm text-[var(--text-dim)]">
-        Уже есть аккаунт?{' '}
+        {t('auth.haveAccount')}{' '}
         <Link to="/login" className="font-semibold text-aqua-300 transition hover:text-aqua-200">
           Войти
         </Link>

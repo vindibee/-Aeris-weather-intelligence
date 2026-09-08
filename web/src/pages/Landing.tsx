@@ -231,7 +231,7 @@ function Hero({ markers, loading, onCity }: {
             transition={{ delay: 0.45, duration: 0.9 }}
             className="mx-auto mt-6 max-w-xl text-pretty text-base leading-relaxed text-[var(--text-dim)] sm:text-lg lg:mx-0"
           >
-            Интерактивная метеоплатформа: живые карты ветра и осадков, 20+ параметров
+            {t('hero.subtitle')}
             атмосферы и точный прогноз на 16 суток для любой точки планеты.
           </motion.p>
 
@@ -245,7 +245,7 @@ function Hero({ markers, loading, onCity }: {
               to="/register"
               className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-aqua-400 to-violet-500 px-8 py-4 text-base font-bold text-ink-950 shadow-glow transition hover:scale-[1.04] active:scale-95"
             >
-              Открыть кабинет
+              {t('nav.toDashboard')}
               <ArrowRight size={19} className="transition-transform group-hover:translate-x-1.5" />
             </Link>
             <Link
@@ -253,7 +253,7 @@ function Hero({ markers, loading, onCity }: {
               className="glass flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold transition hover:border-aqua-400/40"
             >
               <Zap size={17} className="text-amber-400" />
-              Демо-доступ
+              {t('hero.demoAccess')}
             </Link>
           </motion.div>
 
@@ -263,10 +263,10 @@ function Hero({ markers, loading, onCity }: {
             transition={{ delay: 0.9, duration: 1 }}
             className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-4"
           >
-            <Stat value="16" suffix=" сут" label="глубина прогноза" />
-            <Stat value="20" suffix="+" label="параметров" />
-            <Stat value="1.5" suffix=" км" label="сетка модели" />
-            <Stat value="100" suffix="%" label="открытые данные" />
+            <Stat value="16" suffix={` ${t('units.day')}`} label={t('hero.statDepth')} />
+            <Stat value="20" suffix="+" label={t('hero.statParams')} />
+            <Stat value="1.5" suffix={` ${t('units.km')}`} label={t('hero.statGrid')} />
+            <Stat value="100" suffix="%" label={t('hero.statOpen')} />
           </motion.div>
         </motion.div>
 
@@ -359,7 +359,7 @@ function Features() {
         center
         eyebrow={t('landing.eyebrowFeatures')}
         title={<>{t('landing.featuresTitle')} <span className="text-gradient">{t('landing.featuresAccent')}</span></>}
-        subtitle="Шесть инструментов, которые превращают сырые метеоданные в понятную картину — без единой таблицы цифр."
+        subtitle={t('landing.featuresSubtitle')}
       />
 
       <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -404,7 +404,7 @@ function ParameterCloud() {
           <SectionTitle
             eyebrow={t('landing.eyebrowData')}
             title={<>{t('landing.sourcesTitle')} <span className="text-gradient">{t('landing.sourcesAccent')}</span></>}
-            subtitle="Мы агрегируем свободные метеоданные мирового уровня: глобальные модели ICON, GFS и ECMWF через Open-Meteo, радар RainViewer и индекс качества воздуха CAMS."
+            subtitle={t('landing.sourcesSubtitle')}
           />
           <div className="mt-9 space-y-3">
             {[

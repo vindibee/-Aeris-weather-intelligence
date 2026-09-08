@@ -152,6 +152,8 @@ const ru = {
     ctaDemo: 'Войти в демо',
     heroTitle: 'Погода, которую',
     heroTitleAccent: 'видно',
+    featuresSubtitle: 'Шесть инструментов, которые превращают сырые метеоданные в понятную картину — без единой таблицы цифр.',
+    sourcesSubtitle: 'Мы агрегируем свободные метеоданные мирового уровня: глобальные модели ICON, GFS и ECMWF через Open-Meteo, радар RainViewer и индекс качества воздуха CAMS.',
   },
 
   /* Сокращения единиц измерения — тоже часть перевода. */
@@ -166,6 +168,7 @@ const ru = {
     hour: 'ч',
     minute: 'мин',
     mph: 'миль/ч',
+    day: 'сут',
   },
 
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
@@ -324,6 +327,11 @@ const ru = {
     scanning: 'Сканируем опорную сеть…',
     seeForecast: 'Смотреть прогноз',
     gridNode: 'узел сетки',
+    selectHint: 'Выберите экстремум справа',
+    searching: 'Ищем экстремум',
+    failed: 'Не удалось получить данные',
+    runnersUp: 'следом',
+    scanNote: 'опрошено {{scanned}} из {{requested}} точек',
   },
   space: {
     title: 'Погода в',
@@ -359,6 +367,15 @@ const ru = {
     or: 'или',
     withGoogle: 'Войти через Google',
     withTelegram: 'Войти через Telegram',
+    loginFailed: 'Не удалось войти',
+    registerFailed: 'Не удалось создать аккаунт',
+    signUpSubtitle: '15 секунд — и метеоплатформа ваша',
+    yourName: 'Как вас зовут',
+    createPassword: 'Придумайте пароль',
+    min8: 'Минимум 8 символов',
+    hasLetter: 'Есть буква',
+    hasDigit: 'Есть цифра',
+    haveAccount: 'Уже есть аккаунт?',
   },
   settings: {
     units: 'Единицы измерения',
@@ -532,6 +549,8 @@ const uk: Dictionary = {
     ctaDemo: 'Увійти в демо',
     heroTitle: 'Погода, яку',
     heroTitleAccent: 'видно',
+    featuresSubtitle: 'Шість інструментів, які перетворюють сирі метеодані на зрозумілу картину — без жодної таблиці цифр.',
+    sourcesSubtitle: 'Ми агрегуємо вільні метеодані світового рівня: глобальні моделі ICON, GFS та ECMWF через Open-Meteo, радар RainViewer та індекс якості повітря CAMS.',
   },
 
   /* Сокращения единиц измерения — тоже часть перевода. */
@@ -546,6 +565,7 @@ const uk: Dictionary = {
     hour: 'год',
     minute: 'хв',
     mph: 'миль/год',
+    day: 'діб',
   },
 
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
@@ -665,6 +685,11 @@ const uk: Dictionary = {
     hotHint: 'максимум температури', coldHint: 'мінімум температури', windHint: 'максимум поривів',
     idle: 'Натисніть кнопку — сервер опитає опорну мережу метеостанцій, а глобус плавно повернеться до знайденої точки.',
     scanning: 'Скануємо опорну мережу…', seeForecast: 'Дивитися прогноз', gridNode: 'вузол сітки',
+    selectHint: 'Оберіть екстремум праворуч',
+    searching: 'Шукаємо екстремум',
+    failed: 'Не вдалося отримати дані',
+    runnersUp: 'далі',
+    scanNote: 'опитано {{scanned}} з {{requested}} точок',
   },
   space: {
     title: 'Погода в', titleAccent: 'космосі',
@@ -681,6 +706,15 @@ const uk: Dictionary = {
     email: 'Пошта', password: 'Пароль', signIn: 'Увійти', signUp: 'Створити акаунт',
     demoLogin: 'Увійти в демо-акаунт', noAccount: 'Немає акаунта?', register: 'Зареєструватися',
     or: 'або', withGoogle: 'Увійти через Google', withTelegram: 'Увійти через Telegram',
+    loginFailed: 'Не вдалося увійти',
+    registerFailed: 'Не вдалося створити акаунт',
+    signUpSubtitle: '15 секунд — і метеоплатформа ваша',
+    yourName: 'Як вас звати',
+    createPassword: 'Придумайте пароль',
+    min8: 'Мінімум 8 символів',
+    hasLetter: 'Є літера',
+    hasDigit: 'Є цифра',
+    haveAccount: 'Уже маєте акаунт?',
   },
   settings: {
     units: 'Одиниці вимірювання', metric: 'Метричні', imperial: 'Імперські',
@@ -827,6 +861,8 @@ const en: Dictionary = {
     ctaDemo: 'Open the demo',
     heroTitle: 'Weather you can',
     heroTitleAccent: 'see',
+    featuresSubtitle: 'Six tools that turn raw weather data into a picture you can read — without a single table of numbers.',
+    sourcesSubtitle: 'We aggregate world-class open weather data: the ICON, GFS and ECMWF global models via Open-Meteo, RainViewer radar and the CAMS air quality index.',
   },
 
   /* Сокращения единиц измерения — тоже часть перевода. */
@@ -841,6 +877,7 @@ const en: Dictionary = {
     hour: 'h',
     minute: 'min',
     mph: 'mph',
+    day: 'days',
   },
 
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
@@ -955,6 +992,11 @@ const en: Dictionary = {
     hotHint: 'temperature maximum', coldHint: 'temperature minimum', windHint: 'gust maximum',
     idle: 'Press a button — the server scans a reference network of weather stations and the globe smoothly turns to the point it finds.',
     scanning: 'Scanning the reference network…', seeForecast: 'View forecast', gridNode: 'grid node',
+    selectHint: 'Pick an extreme on the right',
+    searching: 'Searching for the extreme',
+    failed: 'Could not load the data',
+    runnersUp: 'next up',
+    scanNote: 'polled {{scanned}} of {{requested}} points',
   },
   space: {
     title: 'Weather in', titleAccent: 'space',
@@ -971,6 +1013,15 @@ const en: Dictionary = {
     email: 'Email', password: 'Password', signIn: 'Sign in', signUp: 'Create account',
     demoLogin: 'Sign in to the demo account', noAccount: 'No account?', register: 'Register',
     or: 'or', withGoogle: 'Sign in with Google', withTelegram: 'Sign in with Telegram',
+    loginFailed: 'Could not sign in',
+    registerFailed: 'Could not create the account',
+    signUpSubtitle: '15 seconds and the platform is yours',
+    yourName: 'What is your name',
+    createPassword: 'Choose a password',
+    min8: 'At least 8 characters',
+    hasLetter: 'Has a letter',
+    hasDigit: 'Has a digit',
+    haveAccount: 'Already have an account?',
   },
   settings: {
     units: 'Units', metric: 'Metric', imperial: 'Imperial',
@@ -1117,6 +1168,8 @@ const de: Dictionary = {
     ctaDemo: 'Demo öffnen',
     heroTitle: 'Wetter, das man',
     heroTitleAccent: 'sieht',
+    featuresSubtitle: 'Sechs Werkzeuge, die rohe Wetterdaten in ein lesbares Bild verwandeln — ohne eine einzige Zahlentabelle.',
+    sourcesSubtitle: 'Wir aggregieren offene Wetterdaten von Weltrang: die globalen Modelle ICON, GFS und ECMWF über Open-Meteo, das RainViewer-Radar und den CAMS-Luftqualitätsindex.',
   },
 
   /* Сокращения единиц измерения — тоже часть перевода. */
@@ -1131,6 +1184,7 @@ const de: Dictionary = {
     hour: 'Std.',
     minute: 'Min.',
     mph: 'mph',
+    day: 'Tage',
   },
 
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
@@ -1245,6 +1299,11 @@ const de: Dictionary = {
     hotHint: 'Temperaturmaximum', coldHint: 'Temperaturminimum', windHint: 'Böenmaximum',
     idle: 'Auf eine Schaltfläche drücken — der Server fragt ein Referenznetz von Wetterstationen ab und der Globus dreht sich sanft zum gefundenen Punkt.',
     scanning: 'Referenznetz wird abgefragt…', seeForecast: 'Vorhersage ansehen', gridNode: 'Gitterpunkt',
+    selectHint: 'Wählen Sie rechts ein Extrem',
+    searching: 'Suche nach dem Extrem',
+    failed: 'Daten konnten nicht geladen werden',
+    runnersUp: 'danach',
+    scanNote: '{{scanned}} von {{requested}} Punkten abgefragt',
   },
   space: {
     title: 'Wetter im', titleAccent: 'Weltraum',
@@ -1261,6 +1320,15 @@ const de: Dictionary = {
     email: 'E-Mail', password: 'Passwort', signIn: 'Anmelden', signUp: 'Konto erstellen',
     demoLogin: 'Im Demo-Konto anmelden', noAccount: 'Kein Konto?', register: 'Registrieren',
     or: 'oder', withGoogle: 'Mit Google anmelden', withTelegram: 'Mit Telegram anmelden',
+    loginFailed: 'Anmeldung fehlgeschlagen',
+    registerFailed: 'Konto konnte nicht erstellt werden',
+    signUpSubtitle: '15 Sekunden und die Plattform gehört Ihnen',
+    yourName: 'Wie heißen Sie',
+    createPassword: 'Passwort wählen',
+    min8: 'Mindestens 8 Zeichen',
+    hasLetter: 'Enthält einen Buchstaben',
+    hasDigit: 'Enthält eine Ziffer',
+    haveAccount: 'Sie haben bereits ein Konto?',
   },
   settings: {
     units: 'Einheiten', metric: 'Metrisch', imperial: 'Imperial',
@@ -1407,6 +1475,8 @@ const fr: Dictionary = {
     ctaDemo: 'Ouvrir la démo',
     heroTitle: 'La météo qui se',
     heroTitleAccent: 'voit',
+    featuresSubtitle: 'Six outils qui transforment des données météo brutes en une image lisible — sans un seul tableau de chiffres.',
+    sourcesSubtitle: 'Nous agrégeons des données météo ouvertes de niveau mondial : les modèles globaux ICON, GFS et ECMWF via Open-Meteo, le radar RainViewer et l’indice de qualité de l’air CAMS.',
   },
 
   /* Сокращения единиц измерения — тоже часть перевода. */
@@ -1421,6 +1491,7 @@ const fr: Dictionary = {
     hour: 'h',
     minute: 'min',
     mph: 'mph',
+    day: 'jours',
   },
 
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
@@ -1535,6 +1606,11 @@ const fr: Dictionary = {
     hotHint: 'maximum de température', coldHint: 'minimum de température', windHint: 'maximum de rafales',
     idle: 'Appuyez sur un bouton — le serveur interroge un réseau de stations de référence et le globe pivote doucement vers le point trouvé.',
     scanning: 'Analyse du réseau de référence…', seeForecast: 'Voir les prévisions', gridNode: 'nœud de grille',
+    selectHint: 'Choisissez un extrême à droite',
+    searching: 'Recherche de l’extrême',
+    failed: 'Impossible de charger les données',
+    runnersUp: 'ensuite',
+    scanNote: '{{scanned}} points interrogés sur {{requested}}',
   },
   space: {
     title: 'La météo dans l’', titleAccent: 'espace',
@@ -1551,6 +1627,15 @@ const fr: Dictionary = {
     email: 'E-mail', password: 'Mot de passe', signIn: 'Se connecter', signUp: 'Créer un compte',
     demoLogin: 'Se connecter au compte démo', noAccount: 'Pas de compte ?', register: 'S’inscrire',
     or: 'ou', withGoogle: 'Se connecter avec Google', withTelegram: 'Se connecter avec Telegram',
+    loginFailed: 'Connexion impossible',
+    registerFailed: 'Impossible de créer le compte',
+    signUpSubtitle: '15 secondes et la plateforme est à vous',
+    yourName: 'Comment vous appelez-vous',
+    createPassword: 'Choisissez un mot de passe',
+    min8: 'Au moins 8 caractères',
+    hasLetter: 'Contient une lettre',
+    hasDigit: 'Contient un chiffre',
+    haveAccount: 'Vous avez déjà un compte ?',
   },
   settings: {
     units: 'Unités', metric: 'Métriques', imperial: 'Impériales',
@@ -1697,6 +1782,8 @@ const es: Dictionary = {
     ctaDemo: 'Abrir la demo',
     heroTitle: 'El tiempo que se',
     heroTitleAccent: 've',
+    featuresSubtitle: 'Seis herramientas que convierten datos meteorológicos en bruto en una imagen legible, sin una sola tabla de cifras.',
+    sourcesSubtitle: 'Agregamos datos meteorológicos abiertos de nivel mundial: los modelos globales ICON, GFS y ECMWF vía Open-Meteo, el radar RainViewer y el índice de calidad del aire CAMS.',
   },
 
   /* Сокращения единиц измерения — тоже часть перевода. */
@@ -1711,6 +1798,7 @@ const es: Dictionary = {
     hour: 'h',
     minute: 'min',
     mph: 'mph',
+    day: 'días',
   },
 
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
@@ -1825,6 +1913,11 @@ const es: Dictionary = {
     hotHint: 'máximo de temperatura', coldHint: 'mínimo de temperatura', windHint: 'máximo de rachas',
     idle: 'Pulsa un botón: el servidor consulta una red de estaciones de referencia y el globo gira suavemente hacia el punto encontrado.',
     scanning: 'Explorando la red de referencia…', seeForecast: 'Ver pronóstico', gridNode: 'nodo de malla',
+    selectHint: 'Elige un extremo a la derecha',
+    searching: 'Buscando el extremo',
+    failed: 'No se pudieron cargar los datos',
+    runnersUp: 'después',
+    scanNote: 'consultados {{scanned}} de {{requested}} puntos',
   },
   space: {
     title: 'El tiempo en el', titleAccent: 'espacio',
@@ -1841,6 +1934,15 @@ const es: Dictionary = {
     email: 'Correo', password: 'Contraseña', signIn: 'Iniciar sesión', signUp: 'Crear cuenta',
     demoLogin: 'Entrar en la cuenta demo', noAccount: '¿Sin cuenta?', register: 'Registrarse',
     or: 'o', withGoogle: 'Entrar con Google', withTelegram: 'Entrar con Telegram',
+    loginFailed: 'No se pudo iniciar sesión',
+    registerFailed: 'No se pudo crear la cuenta',
+    signUpSubtitle: '15 segundos y la plataforma es tuya',
+    yourName: 'Cómo te llamas',
+    createPassword: 'Elige una contraseña',
+    min8: 'Mínimo 8 caracteres',
+    hasLetter: 'Tiene una letra',
+    hasDigit: 'Tiene un dígito',
+    haveAccount: '¿Ya tienes una cuenta?',
   },
   settings: {
     units: 'Unidades', metric: 'Métricas', imperial: 'Imperiales',
