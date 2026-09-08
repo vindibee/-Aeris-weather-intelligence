@@ -32,7 +32,20 @@ if (process.env.NODE_ENV === 'production' && BOT_TOKEN && BOT_SECRET.length < 32
  */
 const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
 const ALLOW_REMOTE_ISSUE = process.env.BOT_ISSUE_ALLOW_REMOTE === '1';
-const isLocalCall = (req) => LOOPBACK.has(req.socket?.remoteAddress ?? '');
+
+/*
+ * Одного адреса сокета мало.
+ *
+ * За обратным прокси — а так устроен любой PaaS — запрос из интернета доходит
+ * до процесса с 127.0.0.1, и проверка адреса молча перестаёт что-либо значить.
+ * Поэтому смотрим ещё и на X-Forwarded-For: прокси дописывает его сам, убрать
+ * его клиент не может, а бот, стучащийся к соседнему процессу напрямую, этот
+ * заголовок не шлёт. Локальным считаем только запрос без следов прокси.
+ */
+const isLocalCall = (req) =>
+  LOOPBACK.has(req.socket?.remoteAddress ?? '') &&
+  !req.headers['x-forwarded-for'] &&
+  !req.headers['x-real-ip'];
 
 /** Сравнение секретов, постоянное по времени. */
 function secretMatches(provided, expected) {
