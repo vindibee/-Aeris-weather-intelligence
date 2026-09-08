@@ -42,7 +42,7 @@ function ChartTooltip({ active, payload, label, metric }: any) {
         )}
         {metric === 'wind' && (
           <div className="text-[var(--text-dim)]">
-            {t('weather.gusts')}: {Math.round(p.gusts ?? 0)} · {dirLabel(t, p.dir)}
+            {t('dash.gustsInline')}: {Math.round(p.gusts ?? 0)} · {dirLabel(t, p.dir)}
           </div>
         )}
         {metric === 'precip' && (
@@ -195,7 +195,7 @@ export function HourlyChart({ hours }: { hours: HourPoint[] }) {
       {metric === 'wind' && (
         <div className="mt-2 flex items-center gap-4 text-[11px] text-[var(--text-dim)]">
           <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 bg-aqua-300" />{t('dash.speed')}</span>
-          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t border-dashed border-magenta-400" />{t('weather.gusts')}</span>
+          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t border-dashed border-magenta-400" />{t('dash.gustsInline')}</span>
         </div>
       )}
     </div>
@@ -283,7 +283,7 @@ export function DailyForecast({ days, units }: { days: DayPoint[]; units: 'metri
               {[
                 [t('weather.conditions'), t(codeShortKey(codeInfo(day.code)))],
                 [t('weather.precip'), `${(day.precipSum ?? 0).toFixed(1)} ${t('units.mm')} · ${day.precipProb ?? 0}%`],
-                [t('weather.wind'), `${Math.round(day.windMax ?? 0)} · ${t('weather.gusts')} ${Math.round(day.gustMax ?? 0)}`],
+                [t('weather.wind'), `${Math.round(day.windMax ?? 0)} · ${t('dash.gustsInline')} ${Math.round(day.gustMax ?? 0)}`],
                 [t('weather.uvMax'), `${(day.uvMax ?? 0).toFixed(1)}`],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-2xl bg-white/4 p-3">

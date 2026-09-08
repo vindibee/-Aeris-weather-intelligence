@@ -118,15 +118,24 @@ export function seed() {
       `INSERT INTO users (email, name, password_hash, avatar_hue, units, home_lat, home_lon, home_name)
        VALUES (?, ?, ?, ?, 'metric', ?, ?, ?)`
     )
-    .run('demo@aeris.app', 'Demo Explorer', hash, 205, 50.4547, 30.5238, 'Киев');
+    .run('demo@aeris.app', 'Demo Explorer', hash, 205, 50.4547, 30.5238, 'Kyiv');
 
+  /*
+   * Названия городов латиницей.
+   *
+   * Сохранённая локация — пользовательские данные: её имя показывается как
+   * есть и переводу не подлежит, иначе человек, сохранивший «Киев», увидел
+   * бы чужое написание. Но демо-аккаунт — витрина для любого языка, и
+   * русские имена в нём выглядели как непереведённый интерфейс. Поэтому
+   * здесь нейтральная латиница, одинаково читаемая во всех шести локалях.
+   */
   const demoPlaces = [
-    ['Киев', 'Украина', 'Киев', 50.4547, 30.5238, 'Europe/Kyiv'],
-    ['Лондон', 'Великобритания', 'England', 51.5074, -0.1278, 'Europe/London'],
-    ['Токио', 'Япония', 'Tokyo', 35.6895, 139.6917, 'Asia/Tokyo'],
-    ['Нью-Йорк', 'США', 'New York', 40.7143, -74.006, 'America/New_York'],
-    ['Рейкьявик', 'Исландия', 'Capital Region', 64.1355, -21.8954, 'Atlantic/Reykjavik'],
-    ['Сингапур', 'Сингапур', null, 1.2897, 103.8501, 'Asia/Singapore'],
+    ['Kyiv', 'Ukraine', 'Kyiv', 50.4547, 30.5238, 'Europe/Kyiv'],
+    ['London', 'United Kingdom', 'England', 51.5074, -0.1278, 'Europe/London'],
+    ['Tokyo', 'Japan', 'Tokyo', 35.6895, 139.6917, 'Asia/Tokyo'],
+    ['New York', 'United States', 'New York', 40.7143, -74.006, 'America/New_York'],
+    ['Reykjavik', 'Iceland', 'Capital Region', 64.1355, -21.8954, 'Atlantic/Reykjavik'],
+    ['Singapore', 'Singapore', null, 1.2897, 103.8501, 'Asia/Singapore'],
   ];
   const ins = db.prepare(
     `INSERT INTO locations (user_id, name, country, admin1, lat, lon, timezone, sort_order)
@@ -134,8 +143,10 @@ export function seed() {
   );
   demoPlaces.forEach((p, i) => ins.run(uid, p[0], p[1], p[2], p[3], p[4], p[5], i));
 
+  // detail оставляем пустым: вид события подписывается на языке интерфейса,
+  // а произвольный текст отсюда переводить было бы нечем
   db.prepare('INSERT INTO activity (user_id, kind, detail) VALUES (?, ?, ?)').run(
-    uid, 'account_created', 'Демо-аккаунт создан автоматически'
+    uid, 'account_created', null
   );
   console.log('[db] seeded demo account -> demo@aeris.app / demo1234');
 }

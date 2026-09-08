@@ -228,7 +228,7 @@ export default function MapPage() {
               <div className="font-mono font-bold">{t('map.points', { count: stats.cells })}</div>
             </div>
             <div>
-              <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">Температура</div>
+              <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">{t('weather.temperature')}</div>
               <div className="font-mono font-bold">
                 <span style={{ color: tempColor(stats.min) }}>{Math.round(stats.min)}°</span>
                 {' … '}

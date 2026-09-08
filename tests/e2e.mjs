@@ -223,7 +223,9 @@ try {
   await page.goto(BASE + '/app/locations', { waitUntil: 'networkidle2' });
   await sleep(6500);
   const locBody = await page.$eval('body', (b) => b.innerText);
-  const cities = ['Киев', 'Лондон', 'Токио', 'Рейкьявик'].filter((c) => locBody.includes(c));
+  // демо-локации засеяны латиницей: витрина открывается на шести языках,
+  // и русские имена в ней читались как непереведённый интерфейс
+  const cities = ['Kyiv', 'London', 'Tokyo', 'Reykjavik'].filter((c) => locBody.includes(c));
   cities.length >= 3 ? ok('карточки сохранённых городов', cities.join(', ')) : fail('карточки городов', cities.join(','));
   await page.screenshot({ path: SHOTS + '15-locations.png' });
 

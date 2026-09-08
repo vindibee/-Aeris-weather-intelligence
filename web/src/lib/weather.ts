@@ -196,15 +196,15 @@ export const pressureTrend = (series: (number | null)[], idx: number): 'up' | 'd
 
 /** Human comfort read-out combining temperature, humidity and wind. */
 export function comfortIndex(temp: number, humidity: number, wind: number): {
-  score: number; label: string; color: string;
+  score: number; labelKey: string; color: string;
 } {
   const tempPenalty = Math.abs(temp - 21) * 3.2;
   const humPenalty = Math.abs(humidity - 50) * 0.55;
   const windPenalty = Math.max(0, wind - 15) * 0.9;
   const score = Math.max(0, Math.min(100, Math.round(100 - tempPenalty - humPenalty - windPenalty)));
-  if (score >= 80) return { score, label: 'Идеально', color: '#4ade80' };
-  if (score >= 60) return { score, label: 'Комфортно', color: '#a3e635' };
-  if (score >= 40) return { score, label: 'Терпимо', color: '#fbbf24' };
-  if (score >= 20) return { score, label: 'Некомфортно', color: '#fb923c' };
-  return { score, label: 'Экстремально', color: '#f43f5e' };
+  if (score >= 80) return { score, labelKey: 'scale.cfIdeal', color: '#4ade80' };
+  if (score >= 60) return { score, labelKey: 'scale.cfComfort', color: '#a3e635' };
+  if (score >= 40) return { score, labelKey: 'scale.cfTolerable', color: '#fbbf24' };
+  if (score >= 20) return { score, labelKey: 'scale.cfUncomfortable', color: '#fb923c' };
+  return { score, labelKey: 'scale.cfExtreme', color: '#f43f5e' };
 }

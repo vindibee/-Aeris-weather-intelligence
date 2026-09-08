@@ -275,6 +275,7 @@ function MetricRow({ icon: Icon, label, value, note, color }: {
 }
 
 function PlanetModal({ planet, onClose }: { planet: Planet; onClose: () => void }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const badge = sourceStyle(planet.source);
   const isEarth = planet.id === 'earth';
@@ -529,7 +530,7 @@ function PlanetModal({ planet, onClose }: { planet: Planet; onClose: () => void 
               Свернуть
             </button>
             <div className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-xs text-[var(--text-dim)]">
-              Потяните, чтобы вращать · колесо приближает · Esc или клик по фону закрывает
+              {t('space.dragZoomHint')}
             </div>
           </motion.div>
         )}

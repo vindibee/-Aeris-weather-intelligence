@@ -98,7 +98,7 @@ export function WindCompass({ speed, deg, gusts, unit, delay = 0 }: {
           <div className="mt-1 text-sm font-semibold text-aqua-300">{t(windLabelKey(speed))}</div>
           <div className="mt-3 space-y-1 text-xs text-[var(--text-dim)]">
             <div>{t('weather.direction')} · <b className="text-[var(--text)]">{dirLabel(t, deg)} ({Math.round(deg)}°)</b></div>
-            <div>{t('weather.gusts')} · <b className="text-[var(--text)]">{Math.round(gusts)} {unit}</b></div>
+            <div>{t('dash.gustsInline')} · <b className="text-[var(--text)]">{Math.round(gusts)} {unit}</b></div>
           </div>
         </div>
       </div>
@@ -280,7 +280,7 @@ export function ComfortPanel({ temp, humidity, wind, delay = 0 }: {
           </div>
         </div>
         <div>
-          <div className="text-lg font-bold" style={{ color: c.color }}>{c.label}</div>
+          <div className="text-lg font-bold" style={{ color: c.color }}>{t(c.labelKey)}</div>
           <p className="mt-1.5 text-xs leading-relaxed text-[var(--text-dim)]">
             {t('dash.comfortHint')}
           </p>

@@ -1,6 +1,7 @@
 import {
   createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Canvas } from '@react-three/fiber';
 
 /**
@@ -54,7 +55,7 @@ export default function GlobeCanvas({
   camera,
   onDemand = false,
   dprMax = 1.75,
-  hint = 'Потяните, чтобы вращать',
+  hint,
   onDragChange,
 }: GlobeCanvasProps) {
   const [dragging, setDragging] = useState(false);

@@ -161,6 +161,7 @@ const ru = {
     favRemoveAria: 'Убрать {{city}} из избранного',
     jkg: 'Дж/кг',
     myGeo: 'Моя геолокация',
+    gustsInline: 'порывы',
   },
 
   /* Шкалы: сила ветра по Бофорту, 16 румбов, уровни UV и качества воздуха. */
@@ -205,6 +206,11 @@ const ru = {
     aqiPoor: 'Плохой',
     aqiVeryPoor: 'Очень плохой',
     aqiHazardous: 'Опасный',
+    cfIdeal: 'Идеально',
+    cfComfort: 'Комфортно',
+    cfTolerable: 'Терпимо',
+    cfUncomfortable: 'Некомфортно',
+    cfExtreme: 'Экстремально',
   },
 
   /* Лендинг: витрина возможностей, шаги и источники данных. */
@@ -458,6 +464,7 @@ const ru = {
     windSpeed: 'Скорость ветра',
     composition: 'Состав атмосферы',
     openEarth: 'Открыть земной глобус с картой городов',
+    dragZoomHint: 'Потяните, чтобы вращать · колесо приближает · Esc или клик по фону закрывает',
   },
   auth: {
     welcomeBack: 'С возвращением',
@@ -683,6 +690,7 @@ const uk: Dictionary = {
     favRemoveAria: 'Прибрати {{city}} з обраного',
     jkg: 'Дж/кг',
     myGeo: 'Моя геолокація',
+    gustsInline: 'пориви',
   },
 
   /* Шкалы: сила ветра по Бофорту, 16 румбов, уровни UV и качества воздуха. */
@@ -727,6 +735,11 @@ const uk: Dictionary = {
     aqiPoor: 'Погана',
     aqiVeryPoor: 'Дуже погана',
     aqiHazardous: 'Небезпечна',
+    cfIdeal: 'Ідеально',
+    cfComfort: 'Комфортно',
+    cfTolerable: 'Терпимо',
+    cfUncomfortable: 'Некомфортно',
+    cfExtreme: 'Екстремально',
   },
 
   /* Лендинг: витрина возможностей, шаги и источники данных. */
@@ -930,6 +943,7 @@ const uk: Dictionary = {
     fullscreen: 'На весь екран', collapse: 'Згорнути',
     temperature: 'Температура', pressure: 'Атмосферний тиск', windSpeed: 'Швидкість вітру',
     composition: 'Склад атмосфери', openEarth: 'Відкрити земний глобус з картою міст',
+    dragZoomHint: 'Потягніть, щоб обертати · колесо наближає · Esc або клік по тлу закриває',
   },
   auth: {
     welcomeBack: 'З поверненням', loginSubtitle: 'Увійдіть, щоб відкрити свій метеокабінет',
@@ -1120,6 +1134,7 @@ const en: Dictionary = {
     favRemoveAria: 'Remove {{city}} from favourites',
     jkg: 'J/kg',
     myGeo: 'My location',
+    gustsInline: 'gusts',
   },
 
   /* Шкалы: сила ветра по Бофорту, 16 румбов, уровни UV и качества воздуха. */
@@ -1164,6 +1179,11 @@ const en: Dictionary = {
     aqiPoor: 'Poor',
     aqiVeryPoor: 'Very poor',
     aqiHazardous: 'Hazardous',
+    cfIdeal: 'Ideal',
+    cfComfort: 'Comfortable',
+    cfTolerable: 'Tolerable',
+    cfUncomfortable: 'Uncomfortable',
+    cfExtreme: 'Extreme',
   },
 
   /* Лендинг: витрина возможностей, шаги и источники данных. */
@@ -1362,6 +1382,7 @@ const en: Dictionary = {
     fullscreen: 'Fullscreen', collapse: 'Collapse',
     temperature: 'Temperature', pressure: 'Atmospheric pressure', windSpeed: 'Wind speed',
     composition: 'Atmosphere composition', openEarth: 'Open the Earth globe with a city map',
+    dragZoomHint: 'Drag to rotate · scroll to zoom · Esc or a click outside closes',
   },
   auth: {
     welcomeBack: 'Welcome back', loginSubtitle: 'Sign in to open your weather dashboard',
@@ -1552,6 +1573,7 @@ const de: Dictionary = {
     favRemoveAria: '{{city}} aus Favoriten entfernen',
     jkg: 'J/kg',
     myGeo: 'Mein Standort',
+    gustsInline: 'Böen',
   },
 
   /* Шкалы: сила ветра по Бофорту, 16 румбов, уровни UV и качества воздуха. */
@@ -1596,6 +1618,11 @@ const de: Dictionary = {
     aqiPoor: 'Schlecht',
     aqiVeryPoor: 'Sehr schlecht',
     aqiHazardous: 'Gefährlich',
+    cfIdeal: 'Ideal',
+    cfComfort: 'Angenehm',
+    cfTolerable: 'Erträglich',
+    cfUncomfortable: 'Unangenehm',
+    cfExtreme: 'Extrem',
   },
 
   /* Лендинг: витрина возможностей, шаги и источники данных. */
@@ -1794,6 +1821,7 @@ const de: Dictionary = {
     fullscreen: 'Vollbild', collapse: 'Verkleinern',
     temperature: 'Temperatur', pressure: 'Luftdruck', windSpeed: 'Windgeschwindigkeit',
     composition: 'Atmosphärenzusammensetzung', openEarth: 'Erdglobus mit Städtekarte öffnen',
+    dragZoomHint: 'Ziehen zum Drehen · Scrollen zum Zoomen · Esc oder Klick daneben schließt',
   },
   auth: {
     welcomeBack: 'Willkommen zurück', loginSubtitle: 'Melden Sie sich an, um Ihr Wetter-Dashboard zu öffnen',
@@ -1984,6 +2012,7 @@ const fr: Dictionary = {
     favRemoveAria: 'Retirer {{city}} des favoris',
     jkg: 'J/kg',
     myGeo: 'Ma position',
+    gustsInline: 'rafales',
   },
 
   /* Шкалы: сила ветра по Бофорту, 16 румбов, уровни UV и качества воздуха. */
@@ -2028,6 +2057,11 @@ const fr: Dictionary = {
     aqiPoor: 'Mauvais',
     aqiVeryPoor: 'Très mauvais',
     aqiHazardous: 'Dangereux',
+    cfIdeal: 'Idéal',
+    cfComfort: 'Confortable',
+    cfTolerable: 'Tolérable',
+    cfUncomfortable: 'Inconfortable',
+    cfExtreme: 'Extrême',
   },
 
   /* Лендинг: витрина возможностей, шаги и источники данных. */
@@ -2226,6 +2260,7 @@ const fr: Dictionary = {
     fullscreen: 'Plein écran', collapse: 'Réduire',
     temperature: 'Température', pressure: 'Pression atmosphérique', windSpeed: 'Vitesse du vent',
     composition: 'Composition de l’atmosphère', openEarth: 'Ouvrir le globe terrestre avec la carte des villes',
+    dragZoomHint: 'Faites glisser pour tourner · molette pour zoomer · Échap ou un clic à côté ferme',
   },
   auth: {
     welcomeBack: 'Bon retour', loginSubtitle: 'Connectez-vous pour ouvrir votre tableau de bord météo',
@@ -2416,6 +2451,7 @@ const es: Dictionary = {
     favRemoveAria: 'Quitar {{city}} de favoritos',
     jkg: 'J/kg',
     myGeo: 'Mi ubicación',
+    gustsInline: 'rachas',
   },
 
   /* Шкалы: сила ветра по Бофорту, 16 румбов, уровни UV и качества воздуха. */
@@ -2460,6 +2496,11 @@ const es: Dictionary = {
     aqiPoor: 'Mala',
     aqiVeryPoor: 'Muy mala',
     aqiHazardous: 'Peligrosa',
+    cfIdeal: 'Ideal',
+    cfComfort: 'Cómodo',
+    cfTolerable: 'Tolerable',
+    cfUncomfortable: 'Incómodo',
+    cfExtreme: 'Extremo',
   },
 
   /* Лендинг: витрина возможностей, шаги и источники данных. */
@@ -2658,6 +2699,7 @@ const es: Dictionary = {
     fullscreen: 'Pantalla completa', collapse: 'Contraer',
     temperature: 'Temperatura', pressure: 'Presión atmosférica', windSpeed: 'Velocidad del viento',
     composition: 'Composición atmosférica', openEarth: 'Abrir el globo terráqueo con el mapa de ciudades',
+    dragZoomHint: 'Arrastra para girar · rueda para acercar · Esc o un clic fuera cierra',
   },
   auth: {
     welcomeBack: 'Bienvenido de nuevo', loginSubtitle: 'Inicia sesión para abrir tu panel meteorológico',

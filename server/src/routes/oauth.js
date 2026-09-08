@@ -91,7 +91,7 @@ setInterval(() => {
 /** Логирует вход и выдаёт токен так же, как обычная авторизация паролем. */
 function completeLogin(res, user, provider, created) {
   db.prepare('INSERT INTO activity (user_id, kind, detail) VALUES (?, ?, ?)')
-    .run(user.id, created ? 'register' : 'login', `через ${provider}`);
+    .run(user.id, created ? 'register' : 'login', provider);
 
   const token = signToken(user);
   res.cookie(COOKIE, token, cookieOptions);
