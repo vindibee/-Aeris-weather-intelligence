@@ -29,7 +29,7 @@ const NAV: NavItem[] = [
 
 /** Раздел живёт вне кабинета, поэтому в навигации стоит отдельным блоком. */
 const EXTERNAL_NAV = [
-  { to: '/space-weather', icon: Rocket, label: 'Погода в космосе' },
+  { to: '/space-weather', icon: Rocket, labelKey: 'nav.space' },
 ];
 
 /* ---------------- search ---------------- */
@@ -75,7 +75,7 @@ function SearchBox({ onDone }: { onDone?: () => void }) {
           const r = await api.reverse(coords.latitude, coords.longitude);
           setPlace({ name: r.name, country: r.country, admin1: r.admin1, lat: coords.latitude, lon: coords.longitude });
         } catch {
-          setPlace({ name: 'Моя позиция', lat: coords.latitude, lon: coords.longitude });
+          setPlace({ name: t('common.myLocation'), lat: coords.latitude, lon: coords.longitude });
         } finally {
           setLocating(false);
           setOpen(false);
@@ -106,7 +106,7 @@ function SearchBox({ onDone }: { onDone?: () => void }) {
         )}
         <button
           onClick={locate}
-          title="Моя геолокация"
+          title={t('dash.myGeo')}
           className="shrink-0 rounded-lg p-1.5 text-aqua-300 transition hover:bg-aqua-400/10"
         >
           {locating ? <Loader2 size={15} className="animate-spin" /> : <Navigation size={15} />}
@@ -150,7 +150,7 @@ function SearchBox({ onDone }: { onDone?: () => void }) {
               ))
             ) : (
               <div className="px-3 py-6 text-center text-sm text-[var(--text-dim)]">
-                Ничего не найдено — попробуйте другое написание
+                {t('common.notFound')}
               </div>
             )}
           </motion.div>
@@ -214,7 +214,7 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
             }
           >
             <n.icon size={18} className="text-violet-300" />
-            {n.label}
+            {t(n.labelKey)}
           </NavLink>
         ))}
       </nav>
@@ -222,7 +222,7 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
       {!!saved?.length && (
         <div className="mt-6 min-h-0 flex-1 overflow-y-auto">
           <div className="px-4 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-dim)]">
-            Мои локации
+            {t('nav.locations')}
           </div>
           <div className="space-y-0.5">
             {saved.map((l) => {
@@ -250,6 +250,7 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
 /* ---------------- layout ---------------- */
 
 export default function DashboardLayout() {
+  const { t } = useTranslation();
   const user = useApp((s) => s.user);
   const theme = useApp((s) => s.theme);
   const setTheme = useApp((s) => s.setTheme);
@@ -276,7 +277,7 @@ export default function DashboardLayout() {
           <button
             onClick={() => setMobileOpen((v) => !v)}
             className="glass rounded-xl p-2 lg:hidden"
-            aria-label="Меню"
+            aria-label={t('dash.menu')}
           >
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -297,7 +298,7 @@ export default function DashboardLayout() {
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="glass rounded-xl p-2.5 transition hover:border-aqua-400/40"
-            title="Сменить тему"
+            title={t('nav.theme')}
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
@@ -329,7 +330,7 @@ export default function DashboardLayout() {
             <button
               onClick={doLogout}
               className="glass rounded-xl p-2.5 text-[var(--text-dim)] transition hover:border-rose-400/40 hover:text-rose-300"
-              title="Выйти"
+              title={t('nav.logout')}
             >
               <LogOut size={16} />
             </button>

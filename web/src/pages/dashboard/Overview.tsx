@@ -31,6 +31,7 @@ function OverviewSkeleton() {
 }
 
 export default function Overview() {
+  const { t } = useTranslation();
   const place = useApp((s) => s.place);
   const units = useApp((s) => s.units);
   const { data, isLoading, isFetching, error, refetch } = useForecast(place.lat, place.lon);
@@ -47,7 +48,7 @@ export default function Overview() {
 
   if (isLoading) return <OverviewSkeleton />;
   if (error || !data) {
-    return <ErrorPanel message={(error as Error)?.message ?? 'Нет данных'} onRetry={() => refetch()} />;
+    return <ErrorPanel message={(error as Error)?.message ?? t('weather.noDataHere')} onRetry={() => refetch()} />;
   }
 
   const c = data.forecast.current;
@@ -132,9 +133,9 @@ export default function Overview() {
               <MapIcon size={22} />
             </div>
             <div>
-              <h3 className="text-lg font-bold">Посмотреть на карте</h3>
+              <h3 className="text-lg font-bold">{t('dash.mapPromoTitle')}</h3>
               <p className="text-sm text-[var(--text-dim)]">
-                Ветер, осадки и температура в реальном времени поверх интерактивной карты
+                {t('dash.mapPromoText')}
               </p>
             </div>
           </div>
@@ -142,15 +143,15 @@ export default function Overview() {
             to="/app/map"
             className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-aqua-400 to-violet-500 px-6 py-3 text-sm font-bold text-ink-950 shadow-glow transition hover:scale-[1.03]"
           >
-            Открыть карту
+            {t('dash.openMap')}
             <ArrowUpRight size={17} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>
       </motion.div>
 
       <p className="pb-4 text-center text-xs text-[var(--text-dim)]">
-        Обновлено {new Date(data.fetchedAt).toLocaleTimeString(localeTag())} · источник Open-Meteo ·
-        часовой пояс {data.forecast.timezone}
+        {t('dash.updatedAt')} {new Date(data.fetchedAt).toLocaleTimeString(localeTag())} · {t('dash.source')} Open-Meteo ·
+        {t('dash.timezone')} {data.forecast.timezone}
       </p>
     </div>
   );

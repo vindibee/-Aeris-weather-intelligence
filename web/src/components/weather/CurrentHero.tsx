@@ -80,9 +80,9 @@ export default function CurrentHero({
             <div className="mt-1.5 flex items-center gap-3 text-xs text-white/60">
               <span className="font-mono">{place.lat.toFixed(3)}, {place.lon.toFixed(3)}</span>
               <span>·</span>
-              <span>местное время {localTime}</span>
+              <span>{t('dash.localTime')} {localTime}</span>
               <span>·</span>
-              <span>{Math.round(data.forecast.elevation)} м н.у.м.</span>
+              <span>{Math.round(data.forecast.elevation)} {t('dash.elevationUnit')}</span>
             </div>
           </div>
 
@@ -98,7 +98,7 @@ export default function CurrentHero({
             <button
               onClick={onRefresh}
               className="rounded-full border border-white/25 bg-white/10 p-2 text-white backdrop-blur-md transition hover:bg-white/20"
-              title="Обновить"
+              title={t('dash.refresh')}
             >
               <RefreshCw size={15} className={refreshing ? 'animate-spin' : ''} />
             </button>
@@ -146,14 +146,14 @@ export default function CurrentHero({
               <div className="flex items-center gap-2.5">
                 <Sunrise size={19} className="text-amber-300" />
                 <div>
-                  <div className="text-[10px] uppercase tracking-widest text-white/50">Восход</div>
+                  <div className="text-[10px] uppercase tracking-widest text-white/50">{t('dash.sunrise')}</div>
                   <div className="font-mono text-base font-semibold">{time(today.sunrise)}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2.5">
                 <Sunset size={19} className="text-orange-300" />
                 <div>
-                  <div className="text-[10px] uppercase tracking-widest text-white/50">Закат</div>
+                  <div className="text-[10px] uppercase tracking-widest text-white/50">{t('dash.sunset')}</div>
                   <div className="font-mono text-base font-semibold">{time(today.sunset)}</div>
                 </div>
               </div>

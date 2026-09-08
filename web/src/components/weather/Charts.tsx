@@ -38,7 +38,7 @@ function ChartTooltip({ active, payload, label, metric }: any) {
           {t(m.labelKey)}: <b>{payload[0].value}{m.unit}</b>
         </div>
         {metric === 'temp' && p.feels != null && (
-          <div className="text-[var(--text-dim)]">ощущается: {Math.round(p.feels)}°</div>
+          <div className="text-[var(--text-dim)]">{t('dash.feelsShort')}: {Math.round(p.feels)}°</div>
         )}
         {metric === 'wind' && (
           <div className="text-[var(--text-dim)]">
@@ -46,7 +46,7 @@ function ChartTooltip({ active, payload, label, metric }: any) {
           </div>
         )}
         {metric === 'precip' && (
-          <div className="text-[var(--text-dim)]">объём: {(p.precip ?? 0).toFixed(1)} мм</div>
+          <div className="text-[var(--text-dim)]">{t('dash.volume')}: {(p.precip ?? 0).toFixed(1)} {t('units.mm')}</div>
         )}
       </div>
     </div>
@@ -77,8 +77,8 @@ export function HourlyChart({ hours }: { hours: HourPoint[] }) {
     <div className="glass rounded-3xl p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h3 className="text-lg font-bold">Почасовой прогноз</h3>
-          <p className="text-xs text-[var(--text-dim)]">Следующие {range} часа · шаг 1 час</p>
+          <h3 className="text-lg font-bold">{t('dash.hourlyForecast')}</h3>
+          <p className="text-xs text-[var(--text-dim)]">{t('dash.hourlyHint', { count: range })}</p>
         </div>
         <div className="glass flex gap-1 rounded-full p-1">
           {([24, 48, 72] as const).map((r) => (
@@ -93,7 +93,7 @@ export function HourlyChart({ hours }: { hours: HourPoint[] }) {
                 <motion.span layoutId="range-pill"
                   className="absolute inset-0 rounded-full bg-gradient-to-r from-aqua-400 to-violet-400" />
               )}
-              <span className="relative">{r}ч</span>
+              <span className="relative">{r}{t('units.hour')}</span>
             </button>
           ))}
         </div>
@@ -188,14 +188,14 @@ export function HourlyChart({ hours }: { hours: HourPoint[] }) {
 
       {metric === 'temp' && (
         <div className="mt-2 flex items-center gap-4 text-[11px] text-[var(--text-dim)]">
-          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 bg-orange-400" />фактическая</span>
-          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t border-dashed border-magenta-400" />ощущается</span>
+          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 bg-orange-400" />{t('dash.actual')}</span>
+          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t border-dashed border-magenta-400" />{t('dash.feelsShort')}</span>
         </div>
       )}
       {metric === 'wind' && (
         <div className="mt-2 flex items-center gap-4 text-[11px] text-[var(--text-dim)]">
-          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 bg-aqua-300" />скорость</span>
-          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t border-dashed border-magenta-400" />порывы</span>
+          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 bg-aqua-300" />{t('dash.speed')}</span>
+          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t border-dashed border-magenta-400" />{t('weather.gusts')}</span>
         </div>
       )}
     </div>
@@ -218,8 +218,8 @@ export function DailyForecast({ days, units }: { days: DayPoint[]; units: 'metri
   return (
     <div className="glass rounded-3xl p-5 sm:p-6">
       <div className="flex items-baseline justify-between">
-        <h3 className="text-lg font-bold">Прогноз на {days.length} дней</h3>
-        <span className="text-xs text-[var(--text-dim)]">нажмите на день</span>
+        <h3 className="text-lg font-bold">{t('dash.forecastDays', { count: days.length })}</h3>
+        <span className="text-xs text-[var(--text-dim)]">{t('dash.tapDay')}</span>
       </div>
 
       <div className="mt-5 space-y-1">

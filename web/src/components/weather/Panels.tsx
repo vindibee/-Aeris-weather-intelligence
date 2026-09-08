@@ -39,7 +39,7 @@ export function WindCompass({ speed, deg, gusts, unit, delay = 0 }: {
   const ticks = Array.from({ length: 72 }, (_, i) => i * 5);
 
   return (
-    <Panel title="Ветер" icon={Wind} delay={delay}>
+    <Panel title={t('weather.wind')} icon={Wind} delay={delay}>
       <div className="flex items-center gap-5">
         <div className="relative h-32 w-32 shrink-0">
           <svg viewBox="0 0 200 200" className="h-full w-full">
@@ -98,7 +98,7 @@ export function WindCompass({ speed, deg, gusts, unit, delay = 0 }: {
           <div className="mt-1 text-sm font-semibold text-aqua-300">{t(windLabelKey(speed))}</div>
           <div className="mt-3 space-y-1 text-xs text-[var(--text-dim)]">
             <div>{t('weather.direction')} · <b className="text-[var(--text)]">{dirLabel(t, deg)} ({Math.round(deg)}°)</b></div>
-            <div>порывы · <b className="text-[var(--text)]">{Math.round(gusts)} {unit}</b></div>
+            <div>{t('weather.gusts')} · <b className="text-[var(--text)]">{Math.round(gusts)} {unit}</b></div>
           </div>
         </div>
       </div>
@@ -111,6 +111,7 @@ export function WindCompass({ speed, deg, gusts, unit, delay = 0 }: {
 export function SunArc({ day, utcOffset, delay = 0 }: {
   day: DayPoint; utcOffset: number; delay?: number;
 }) {
+  const { t } = useTranslation();
   const toMin = (iso: string) => {
     if (!iso) return 0;
     return Number(iso.slice(11, 13)) * 60 + Number(iso.slice(14, 16));
@@ -128,7 +129,7 @@ export function SunArc({ day, utcOffset, delay = 0 }: {
   const mins = Math.round((((day.daylight ?? 0) % 3600) / 60));
 
   return (
-    <Panel title="Солнце" icon={Sun} delay={delay}>
+    <Panel title={t('dash.sun')} icon={Sun} delay={delay}>
       <svg viewBox="0 0 300 120" className="w-full">
         <defs>
           <linearGradient id="sunPath" x1="0" y1="0" x2="1" y2="0">
@@ -158,8 +159,8 @@ export function SunArc({ day, utcOffset, delay = 0 }: {
         <text x="280" y="116" fontSize="10" fill="var(--text-dim)" textAnchor="middle">{day.sunset.slice(11, 16)}</text>
       </svg>
       <div className="mt-2 flex items-center justify-between text-xs">
-        <span className="text-[var(--text-dim)]">Световой день</span>
-        <span className="font-mono font-bold text-amber-300">{hours} ч {mins} мин</span>
+        <span className="text-[var(--text-dim)]">{t('dash.daylight')}</span>
+        <span className="font-mono font-bold text-amber-300">{hours} {t('units.hour')} {mins} {t('units.minute')}</span>
       </div>
     </Panel>
   );
@@ -182,7 +183,7 @@ export function AirQuality({ air, delay = 0 }: { air: ForecastBundle['air']; del
   const info = aqiInfo(aqi);
 
   return (
-    <Panel title="Качество воздуха" icon={Leaf} delay={delay}>
+    <Panel title={t('dash.airQuality')} icon={Leaf} delay={delay}>
       {c ? (
         <>
           <div className="flex items-end justify-between">
@@ -222,7 +223,7 @@ export function AirQuality({ air, delay = 0 }: { air: ForecastBundle['air']; del
         </>
       ) : (
         <div className="py-6 text-center text-sm text-[var(--text-dim)]">
-          Данные по воздуху недоступны для этой точки
+          {t('dash.airNoData')}
         </div>
       )}
     </Panel>
@@ -235,12 +236,12 @@ export function UVPanel({ uv, uvMax, delay = 0 }: { uv: number; uvMax: number; d
   const { t } = useTranslation();
   const info = uvInfo(uv);
   return (
-    <Panel title="UV-индекс" icon={Sun} delay={delay}>
+    <Panel title={t('weather.uvIndex')} icon={Sun} delay={delay}>
       <div className="flex items-end justify-between">
         <div className="font-mono text-4xl font-bold" style={{ color: info.color }}>{uv.toFixed(1)}</div>
         <div className="text-right">
           <div className="text-sm font-bold" style={{ color: info.color }}>{t(info.labelKey)}</div>
-          <div className="text-[11px] text-[var(--text-dim)]">макс. сегодня {uvMax.toFixed(1)}</div>
+          <div className="text-[11px] text-[var(--text-dim)]">{t('dash.uvMaxToday')} {uvMax.toFixed(1)}</div>
         </div>
       </div>
       <div className="mt-3"><Meter pct={info.pct} color={info.color} /></div>
@@ -254,11 +255,12 @@ export function UVPanel({ uv, uvMax, delay = 0 }: { uv: number; uvMax: number; d
 export function ComfortPanel({ temp, humidity, wind, delay = 0 }: {
   temp: number; humidity: number; wind: number; delay?: number;
 }) {
+  const { t } = useTranslation();
   const c = comfortIndex(temp, humidity, wind);
   const circumference = 2 * Math.PI * 42;
 
   return (
-    <Panel title="Индекс комфорта" icon={Activity} delay={delay}>
+    <Panel title={t('dash.comfortIndex')} icon={Activity} delay={delay}>
       <div className="flex items-center gap-5">
         <div className="relative h-28 w-28 shrink-0">
           <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
@@ -274,13 +276,13 @@ export function ComfortPanel({ temp, humidity, wind, delay = 0 }: {
           </svg>
           <div className="absolute inset-0 grid place-content-center text-center">
             <div className="font-mono text-2xl font-bold">{c.score}</div>
-            <div className="text-[9px] uppercase tracking-wider text-[var(--text-dim)]">из 100</div>
+            <div className="text-[9px] uppercase tracking-wider text-[var(--text-dim)]">{t('dash.outOf100')}</div>
           </div>
         </div>
         <div>
           <div className="text-lg font-bold" style={{ color: c.color }}>{c.label}</div>
           <p className="mt-1.5 text-xs leading-relaxed text-[var(--text-dim)]">
-            Расчёт по температуре, влажности и скорости ветра относительно зоны комфорта 21 °C / 50 %.
+            {t('dash.comfortHint')}
           </p>
         </div>
       </div>
@@ -307,7 +309,7 @@ export function PressurePanel({ hours, current, delay = 0 }: {
   }).join(' ');
 
   return (
-    <Panel title="Давление" icon={Gauge} delay={delay}>
+    <Panel title={t('weather.pressure')} icon={Gauge} delay={delay}>
       <div className="flex items-end justify-between">
         <div className="flex items-baseline gap-1.5">
           <span className="font-mono text-4xl font-bold">{Math.round(current)}</span>
@@ -337,7 +339,7 @@ export function MetricTiles({ data, hours, delay = 0 }: {
   const nowHour = hours[idx];
 
   const tiles = [
-    { icon: Droplets, label: 'Влажность', value: `${c.relative_humidity_2m}%`, color: '#4ade80' },
+    { icon: Droplets, label: t('weather.humidity'), value: `${c.relative_humidity_2m}%`, color: '#4ade80' },
     {
       icon: Thermometer, label: t('weather.dewPoint'),
       value: `${Math.round(nowHour?.temp != null ? (h.dew_point_2m?.[0] ?? 0) : 0)}°`,
@@ -346,11 +348,11 @@ export function MetricTiles({ data, hours, delay = 0 }: {
     { icon: Cloud, label: t('weather.cloudiness'), value: `${c.cloud_cover}%`, color: '#94a3c4' },
     {
       icon: Eye, label: t('weather.visibility'),
-      value: `${Math.round((h.visibility?.[0] ?? 0) / 1000)} км`, color: '#c084fc',
+      value: `${Math.round((h.visibility?.[0] ?? 0) / 1000)} ${t('units.km')}`, color: '#c084fc',
     },
     {
       icon: Zap, label: 'CAPE',
-      value: `${Math.round(h.cape?.[0] ?? 0)} Дж/кг`, color: '#facc15',
+      value: `${Math.round(h.cape?.[0] ?? 0)} ${t('dash.jkg')}`, color: '#facc15',
     },
     {
       icon: Timer, label: t('weather.surfacePressure'),

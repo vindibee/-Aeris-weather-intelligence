@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
 import { useFavourites } from '../../hooks/useFavourites';
 import type { FavouriteCity } from '../../services/favourites';
@@ -20,6 +21,7 @@ export default function FavouriteButton({
   showLabel?: boolean;
   className?: string;
 }) {
+  const { t } = useTranslation();
   const { isFavourite, toggle, pending } = useFavourites();
   const active = isFavourite(city);
 
@@ -32,8 +34,8 @@ export default function FavouriteButton({
       onClick={(e) => { e.stopPropagation(); e.preventDefault(); toggle(city); }}
       disabled={pending}
       aria-pressed={active}
-      aria-label={active ? `Убрать ${city.name} из избранного` : `Добавить ${city.name} в избранное`}
-      title={active ? 'Убрать из избранного' : 'В избранное'}
+      aria-label={active ? t('dash.favRemoveAria', { city: city.name }) : t('dash.favAddAria', { city: city.name })}
+      title={active ? t('dash.favRemove') : t('dash.favAdd')}
       className={`group inline-flex items-center gap-2 rounded-xl border transition disabled:opacity-60 ${pad} ${
         active
           ? 'border-amber-400/45 bg-amber-400/12 text-amber-300'
@@ -50,7 +52,7 @@ export default function FavouriteButton({
       </motion.span>
       {showLabel && (
         <span className="text-xs font-bold">
-          {active ? 'В избранном' : 'В избранное'}
+          {active ? t('dash.favIn') : t('dash.favAdd')}
         </span>
       )}
     </button>

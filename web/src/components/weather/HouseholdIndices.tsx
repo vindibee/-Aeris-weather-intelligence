@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Car, Shirt, PawPrint, ChevronDown } from 'lucide-react';
 import type { ForecastBundle } from '../../lib/api';
@@ -114,6 +115,7 @@ export default function HouseholdIndices({
   days: DayPoint[];
   hours: HourPoint[];
 }) {
+  const { t } = useTranslation();
   const units = useApp((s) => s.units);
 
   const results = useMemo(() => {
@@ -161,21 +163,21 @@ export default function HouseholdIndices({
   return (
     <section>
       <div className="mb-3 flex items-baseline gap-3">
-        <h2 className="text-lg font-extrabold tracking-tight">Бытовые индексы</h2>
-        <span className="text-xs text-[var(--text-dim)]">рассчитаны по текущему прогнозу</span>
+        <h2 className="text-lg font-extrabold tracking-tight">{t('indices.title')}</h2>
+        <span className="text-xs text-[var(--text-dim)]">{t('dash.indicesHint')}</span>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <IndexCard
-          icon={Car} title="Автомойка" accent="#38bdf8"
+          icon={Car} title={t('indices.carWash')} accent="#38bdf8"
           result={results.carWash} delay={0}
         />
         <IndexCard
-          icon={Shirt} title="Сушка белья" accent="#4ade80"
+          icon={Shirt} title={t('indices.laundry')} accent="#4ade80"
           result={results.laundry} delay={0.07}
         />
         <IndexCard
-          icon={PawPrint} title="Выгул питомцев" accent="#fbbf24"
+          icon={PawPrint} title={t('indices.petWalk')} accent="#fbbf24"
           result={results.petWalk} delay={0.14}
         />
       </div>
