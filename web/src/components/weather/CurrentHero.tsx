@@ -38,12 +38,12 @@ export default function CurrentHero({
     .toISOString().slice(11, 16);
 
   const chips = [
-    { icon: Thermometer, label: 'Ощущается', value: `${Math.round(feels)}${u.temperature_2m}` },
+    { icon: Thermometer, label: t('weather.feelsLike'), value: `${Math.round(feels)}${u.temperature_2m}` },
     { icon: Wind, label: `Ветер · ${windDir(c.wind_direction_10m as number)}`, value: `${Math.round(Number(c.wind_speed_10m))} ${u.wind_speed_10m}` },
-    { icon: Droplets, label: 'Влажность', value: `${c.relative_humidity_2m}%` },
-    { icon: Gauge, label: 'Давление', value: `${Math.round(Number(c.pressure_msl))} гПа` },
-    { icon: CloudRain, label: 'Осадки', value: `${Number(c.precipitation).toFixed(1)} ${u.precipitation}` },
-    { icon: Eye, label: 'Облачность', value: `${c.cloud_cover}%` },
+    { icon: Droplets, label: t('weather.humidity'), value: `${c.relative_humidity_2m}%` },
+    { icon: Gauge, label: t('weather.pressure'), value: `${Math.round(Number(c.pressure_msl))} ${t('units.hpa')}` },
+    { icon: CloudRain, label: t('weather.precip'), value: `${Number(c.precipitation).toFixed(1)} ${u.precipitation}` },
+    { icon: Eye, label: t('weather.cloudiness'), value: `${c.cloud_cover}%` },
   ];
 
   return (

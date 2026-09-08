@@ -11,13 +11,14 @@ import { codeShortKey, codeEmoji, codeInfo, tempColor, windDir } from '../../lib
 
 type Metric = 'temp' | 'precip' | 'wind' | 'humidity' | 'pressure' | 'uv';
 
-const METRICS: { key: Metric; label: string; icon: typeof Wind; color: string; unit: string }[] = [
-  { key: 'temp', label: 'Температура', icon: Thermometer, color: '#fb923c', unit: '°' },
-  { key: 'precip', label: 'Осадки', icon: CloudRain, color: '#38bdf8', unit: '%' },
-  { key: 'wind', label: 'Ветер', icon: Wind, color: '#7df2ff', unit: '' },
-  { key: 'humidity', label: 'Влажность', icon: Droplets, color: '#4ade80', unit: '%' },
-  { key: 'pressure', label: 'Давление', icon: Gauge, color: '#a78bfa', unit: '' },
-  { key: 'uv', label: 'UV-индекс', icon: Sun, color: '#fbbf24', unit: '' },
+/* labelKey, а не готовая подпись: константа живёт вне React и вызвать t() здесь нельзя */
+const METRICS: { key: Metric; labelKey: string; icon: typeof Wind; color: string; unit: string }[] = [
+  { key: 'temp', labelKey: 'weather.temperature', icon: Thermometer, color: '#fb923c', unit: '°' },
+  { key: 'precip', labelKey: 'weather.precip', icon: CloudRain, color: '#38bdf8', unit: '%' },
+  { key: 'wind', labelKey: 'weather.wind', icon: Wind, color: '#7df2ff', unit: '' },
+  { key: 'humidity', labelKey: 'weather.humidity', icon: Droplets, color: '#4ade80', unit: '%' },
+  { key: 'pressure', labelKey: 'weather.pressure', icon: Gauge, color: '#a78bfa', unit: '' },
+  { key: 'uv', labelKey: 'weather.uvIndex', icon: Sun, color: '#fbbf24', unit: '' },
 ];
 
 function ChartTooltip({ active, payload, label, metric }: any) {
@@ -34,7 +35,7 @@ function ChartTooltip({ active, payload, label, metric }: any) {
       </div>
       <div className="mt-2 space-y-1 font-mono text-xs">
         <div style={{ color: m.color }}>
-          {m.label}: <b>{payload[0].value}{m.unit}</b>
+          {t(m.labelKey)}: <b>{payload[0].value}{m.unit}</b>
         </div>
         {metric === 'temp' && p.feels != null && (
           <div className="text-[var(--text-dim)]">ощущается: {Math.round(p.feels)}°</div>
@@ -53,6 +54,7 @@ function ChartTooltip({ active, payload, label, metric }: any) {
 }
 
 export function HourlyChart({ hours }: { hours: HourPoint[] }) {
+  const { t } = useTranslation();
   const [metric, setMetric] = useState<Metric>('temp');
   const [range, setRange] = useState<24 | 48 | 72>(24);
   const m = METRICS.find((x) => x.key === metric)!;
@@ -110,7 +112,7 @@ export function HourlyChart({ hours }: { hours: HourPoint[] }) {
             style={metric === x.key ? { background: x.color } : undefined}
           >
             <x.icon size={13} />
-            {x.label}
+            {t(x.labelKey)}
           </button>
         ))}
       </div>
@@ -235,7 +237,7 @@ export function DailyForecast({ days, units }: { days: DayPoint[]; units: 'metri
             >
               <div className="w-14 shrink-0">
                 <div className={`text-sm font-bold ${d.isToday ? 'text-aqua-300' : ''}`}>
-                  {d.isToday ? 'Сегодня' : d.weekday}
+                  {d.isToday ? t('weather.today') : d.weekday}
                 </div>
                 <div className="text-[10px] text-[var(--text-dim)]">{d.label}</div>
               </div>
@@ -279,10 +281,10 @@ export function DailyForecast({ days, units }: { days: DayPoint[]; units: 'metri
           >
             <div className="mt-5 grid grid-cols-2 gap-3 border-t border-white/8 pt-5 sm:grid-cols-4">
               {[
-                ['Условия', t(codeShortKey(codeInfo(day.code)))],
-                ['Осадки', `${(day.precipSum ?? 0).toFixed(1)} мм · ${day.precipProb ?? 0}%`],
-                ['Ветер', `${Math.round(day.windMax ?? 0)} · порывы ${Math.round(day.gustMax ?? 0)}`],
-                ['UV макс.', `${(day.uvMax ?? 0).toFixed(1)}`],
+                [t('weather.conditions'), t(codeShortKey(codeInfo(day.code)))],
+                [t('weather.precip'), `${(day.precipSum ?? 0).toFixed(1)} ${t('units.mm')} · ${day.precipProb ?? 0}%`],
+                [t('weather.wind'), `${Math.round(day.windMax ?? 0)} · ${t('weather.gusts')} ${Math.round(day.gustMax ?? 0)}`],
+                [t('weather.uvMax'), `${(day.uvMax ?? 0).toFixed(1)}`],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-2xl bg-white/4 p-3">
                   <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">{k}</div>
@@ -301,6 +303,7 @@ export function DailyForecast({ days, units }: { days: DayPoint[]; units: 'metri
 
 /** Compact 24-hour temperature strip used at the top of the overview. */
 export function HourStrip({ hours, units }: { hours: HourPoint[]; units: 'metric' | 'imperial' }) {
+  const { t } = useTranslation();
   return (
     <div className="glass overflow-x-auto rounded-3xl p-4">
       <div className="flex gap-2">
@@ -315,7 +318,7 @@ export function HourStrip({ hours, units }: { hours: HourPoint[]; units: 'metric
             }`}
           >
             <span className={`text-[11px] font-semibold ${h.isNow ? 'text-aqua-300' : 'text-[var(--text-dim)]'}`}>
-              {h.isNow ? 'Сейчас' : h.time}
+              {h.isNow ? t('weather.now') : h.time}
             </span>
             <span className="text-xl">{codeEmoji(h.code, !!h.isDay)}</span>
             <span className="font-mono text-sm font-bold" style={{ color: tempColor(h.temp, units) }}>

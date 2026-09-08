@@ -76,7 +76,7 @@ export default function CityDashboard({ city }: { city: CityRef }) {
   }, [outfit]);
 
   const tempUnit = units === 'imperial' ? '°F' : '°C';
-  const windUnit = units === 'imperial' ? 'миль/ч' : 'км/ч';
+  const windUnit = units === 'imperial' ? t('units.mph') : t('units.kmh');
   const info = codeInfo(cur?.weather_code);
 
   return (
@@ -144,7 +144,7 @@ export default function CityDashboard({ city }: { city: CityRef }) {
                 {[
                   { icon: Wind, label: 'Ветер', value: `${Math.round(cur.wind_speed_10m)} ${windUnit}`, color: '#7df2ff' },
                   { icon: Droplets, label: 'Влажность', value: `${Math.round(cur.relative_humidity_2m)}%`, color: '#4ade80' },
-                  { icon: Gauge, label: 'Давление', value: `${Math.round(cur.pressure_msl)} гПа`, color: '#a78bfa' },
+                  { icon: Gauge, label: t('weather.pressure'), value: `${Math.round(cur.pressure_msl)} ${t('units.hpa')}`, color: '#a78bfa' },
                   { icon: Sun, label: 'UV-индекс', value: now?.uv == null ? '—' : now.uv.toFixed(1), color: '#fbbf24' },
                   { icon: CloudRain, label: 'Осадки', value: now?.precipProb == null ? '—' : `${Math.round(now.precipProb)}%`, color: '#38bdf8' },
                   { icon: Thermometer, label: 'Порывы', value: `${Math.round(cur.wind_gusts_10m ?? 0)} ${windUnit}`, color: '#f472b6' },

@@ -18,6 +18,20 @@ export const LANGUAGES = [
 export type LanguageCode = (typeof LANGUAGES)[number]['code'];
 
 const ru = {
+  /* Сокращения единиц измерения — тоже часть перевода. */
+  units: {
+    mm: 'мм',
+    cm: 'см',
+    km: 'км',
+    kmh: 'км/ч',
+    ms: 'м/с',
+    hpa: 'гПа',
+    mbar: 'мбар',
+    hour: 'ч',
+    minute: 'мин',
+    mph: 'миль/ч',
+  },
+
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
   wmo: {
     clear: 'Ясно',
@@ -119,6 +133,22 @@ const ru = {
     today: 'сегодня',
     forecast: 'Прогноз',
     noDataHere: 'В самой точке наблюдений нет — данные ближайшей станции, в {{km}} км.',
+    cloudiness: 'Облачность',
+    dewPoint: 'Точка росы',
+    visibility: 'Видимость',
+    surfacePressure: 'Приземное давл.',
+    trendUp: 'Растёт — погода улучшается',
+    trendDown: 'Падает — возможно ухудшение',
+    trendStable: 'Стабильное',
+    temperature: 'Температура',
+    now: 'Сейчас',
+    conditions: 'Условия',
+    uvMax: 'UV макс.',
+    uvIndex: 'UV-индекс',
+    compassN: 'С',
+    compassE: 'В',
+    compassS: 'Ю',
+    compassW: 'З',
   },
   favourite: {
     add: 'В избранное',
@@ -231,6 +261,20 @@ export type Dictionary = {
 };
 
 const uk: Dictionary = {
+  /* Сокращения единиц измерения — тоже часть перевода. */
+  units: {
+    mm: 'мм',
+    cm: 'см',
+    km: 'км',
+    kmh: 'км/год',
+    ms: 'м/с',
+    hpa: 'гПа',
+    mbar: 'мбар',
+    hour: 'год',
+    minute: 'хв',
+    mph: 'миль/год',
+  },
+
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
   wmo: {
     clear: 'Ясно',
@@ -310,6 +354,22 @@ const uk: Dictionary = {
     feelsLike: 'відчувається як', wind: 'Вітер', gusts: 'Пориви', humidity: 'Вологість',
     pressure: 'Тиск', uv: 'UV-індекс', precip: 'Опади', today: 'сьогодні', forecast: 'Прогноз',
     noDataHere: 'У самій точці спостережень немає — дані найближчої станції, за {{km}} км.',
+    cloudiness: 'Хмарність',
+    dewPoint: 'Точка роси',
+    visibility: 'Видимість',
+    surfacePressure: 'Приземний тиск',
+    trendUp: 'Зростає — погода покращується',
+    trendDown: 'Падає — можливе погіршення',
+    trendStable: 'Стабільний',
+    temperature: 'Температура',
+    now: 'Зараз',
+    conditions: 'Умови',
+    uvMax: 'UV макс.',
+    uvIndex: 'UV-індекс',
+    compassN: 'Пн',
+    compassE: 'Сх',
+    compassS: 'Пд',
+    compassW: 'Зх',
   },
   favourite: {
     add: 'До обраного', added: 'В обраному',
@@ -359,6 +419,20 @@ const uk: Dictionary = {
 };
 
 const en: Dictionary = {
+  /* Сокращения единиц измерения — тоже часть перевода. */
+  units: {
+    mm: 'mm',
+    cm: 'cm',
+    km: 'km',
+    kmh: 'km/h',
+    ms: 'm/s',
+    hpa: 'hPa',
+    mbar: 'mbar',
+    hour: 'h',
+    minute: 'min',
+    mph: 'mph',
+  },
+
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
   wmo: {
     clear: 'Clear sky',
@@ -433,6 +507,22 @@ const en: Dictionary = {
     pressure: 'Pressure', uv: 'UV index', precip: 'Precipitation', today: 'today',
     forecast: 'Forecast',
     noDataHere: 'No observations at this exact point — data from the nearest station, {{km}} km away.',
+    cloudiness: 'Cloud cover',
+    dewPoint: 'Dew point',
+    visibility: 'Visibility',
+    surfacePressure: 'Surface press.',
+    trendUp: 'Rising — improving',
+    trendDown: 'Falling — may worsen',
+    trendStable: 'Steady',
+    temperature: 'Temperature',
+    now: 'Now',
+    conditions: 'Conditions',
+    uvMax: 'UV max',
+    uvIndex: 'UV index',
+    compassN: 'N',
+    compassE: 'E',
+    compassS: 'S',
+    compassW: 'W',
   },
   favourite: {
     add: 'Add to favourites', added: 'In favourites',
@@ -482,6 +572,20 @@ const en: Dictionary = {
 };
 
 const de: Dictionary = {
+  /* Сокращения единиц измерения — тоже часть перевода. */
+  units: {
+    mm: 'mm',
+    cm: 'cm',
+    km: 'km',
+    kmh: 'km/h',
+    ms: 'm/s',
+    hpa: 'hPa',
+    mbar: 'mbar',
+    hour: 'Std.',
+    minute: 'Min.',
+    mph: 'mph',
+  },
+
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
   wmo: {
     clear: 'Klarer Himmel',
@@ -556,6 +660,22 @@ const de: Dictionary = {
     pressure: 'Luftdruck', uv: 'UV-Index', precip: 'Niederschlag', today: 'heute',
     forecast: 'Vorhersage',
     noDataHere: 'Keine Messungen an diesem Punkt — Daten der nächsten Station, {{km}} km entfernt.',
+    cloudiness: 'Bewölkung',
+    dewPoint: 'Taupunkt',
+    visibility: 'Sichtweite',
+    surfacePressure: 'Bodendruck',
+    trendUp: 'Steigend — Besserung',
+    trendDown: 'Fallend — Verschlechterung möglich',
+    trendStable: 'Stabil',
+    temperature: 'Temperatur',
+    now: 'Jetzt',
+    conditions: 'Bedingungen',
+    uvMax: 'UV max.',
+    uvIndex: 'UV-Index',
+    compassN: 'N',
+    compassE: 'O',
+    compassS: 'S',
+    compassW: 'W',
   },
   favourite: {
     add: 'Zu Favoriten', added: 'In Favoriten',
@@ -605,6 +725,20 @@ const de: Dictionary = {
 };
 
 const fr: Dictionary = {
+  /* Сокращения единиц измерения — тоже часть перевода. */
+  units: {
+    mm: 'mm',
+    cm: 'cm',
+    km: 'km',
+    kmh: 'km/h',
+    ms: 'm/s',
+    hpa: 'hPa',
+    mbar: 'mbar',
+    hour: 'h',
+    minute: 'min',
+    mph: 'mph',
+  },
+
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
   wmo: {
     clear: 'Ciel dégagé',
@@ -679,6 +813,22 @@ const fr: Dictionary = {
     pressure: 'Pression', uv: 'Indice UV', precip: 'Précipitations', today: 'aujourd’hui',
     forecast: 'Prévisions',
     noDataHere: 'Aucune observation à ce point précis — données de la station la plus proche, à {{km}} km.',
+    cloudiness: 'Nébulosité',
+    dewPoint: 'Point de rosée',
+    visibility: 'Visibilité',
+    surfacePressure: 'Pression au sol',
+    trendUp: 'En hausse — amélioration',
+    trendDown: 'En baisse — dégradation possible',
+    trendStable: 'Stable',
+    temperature: 'Température',
+    now: 'Maintenant',
+    conditions: 'Conditions',
+    uvMax: 'UV max',
+    uvIndex: 'Indice UV',
+    compassN: 'N',
+    compassE: 'E',
+    compassS: 'S',
+    compassW: 'O',
   },
   favourite: {
     add: 'Ajouter aux favoris', added: 'Dans les favoris',
@@ -728,6 +878,20 @@ const fr: Dictionary = {
 };
 
 const es: Dictionary = {
+  /* Сокращения единиц измерения — тоже часть перевода. */
+  units: {
+    mm: 'mm',
+    cm: 'cm',
+    km: 'km',
+    kmh: 'km/h',
+    ms: 'm/s',
+    hpa: 'hPa',
+    mbar: 'mbar',
+    hour: 'h',
+    minute: 'min',
+    mph: 'mph',
+  },
+
   /* Погодные явления по кодам WMO. Ключи приходят из lib/weather.ts. */
   wmo: {
     clear: 'Cielo despejado',
@@ -802,6 +966,22 @@ const es: Dictionary = {
     pressure: 'Presión', uv: 'Índice UV', precip: 'Precipitación', today: 'hoy',
     forecast: 'Pronóstico',
     noDataHere: 'No hay observaciones en este punto exacto: datos de la estación más cercana, a {{km}} km.',
+    cloudiness: 'Nubosidad',
+    dewPoint: 'Punto de rocío',
+    visibility: 'Visibilidad',
+    surfacePressure: 'Presión sup.',
+    trendUp: 'Subiendo — mejora',
+    trendDown: 'Bajando — posible empeoramiento',
+    trendStable: 'Estable',
+    temperature: 'Temperatura',
+    now: 'Ahora',
+    conditions: 'Condiciones',
+    uvMax: 'UV máx.',
+    uvIndex: 'Índice UV',
+    compassN: 'N',
+    compassE: 'E',
+    compassS: 'S',
+    compassW: 'O',
   },
   favourite: {
     add: 'Añadir a favoritos', added: 'En favoritos',

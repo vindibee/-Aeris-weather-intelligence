@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   Wind, Sun, Droplets, Gauge, Eye, Thermometer, Cloud, Zap, Activity,
   TrendingUp, TrendingDown, Minus, Leaf, Timer,
@@ -34,6 +35,7 @@ function Panel({ title, icon: Icon, children, className = '', delay = 0 }: {
 export function WindCompass({ speed, deg, gusts, unit, delay = 0 }: {
   speed: number; deg: number; gusts: number; unit: string; delay?: number;
 }) {
+  const { t } = useTranslation();
   const ticks = Array.from({ length: 72 }, (_, i) => i * 5);
 
   return (
@@ -56,14 +58,14 @@ export function WindCompass({ speed, deg, gusts, unit, delay = 0 }: {
               );
             })}
             <circle cx="100" cy="100" r="66" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="1" />
-            {[['С', 0], ['В', 90], ['Ю', 180], ['З', 270]].map(([label, a]) => {
+            {[[t('weather.compassN'), 0], [t('weather.compassE'), 90], [t('weather.compassS'), 180], [t('weather.compassW'), 270]].map(([label, a], idx) => {
               const rad = ((a as number) - 90) * (Math.PI / 180);
               return (
                 <text
                   key={label as string}
                   x={100 + Math.cos(rad) * 56} y={100 + Math.sin(rad) * 56 + 4}
                   textAnchor="middle" fontSize="13" fontWeight="700"
-                  fill={label === 'С' ? '#7df2ff' : 'rgba(255,255,255,.45)'}
+                  fill={idx === 0 ? '#7df2ff' : 'rgba(255,255,255,.45)'}
                 >
                   {label}
                 </text>
@@ -287,12 +289,13 @@ export function ComfortPanel({ temp, humidity, wind, delay = 0 }: {
 export function PressurePanel({ hours, current, delay = 0 }: {
   hours: HourPoint[]; current: number; delay?: number;
 }) {
+  const { t } = useTranslation();
   const series = hours.map((h) => h.pressure);
   const trend = pressureTrend(series, Math.min(6, series.length - 1));
   const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus;
   const color = trend === 'up' ? '#4ade80' : trend === 'down' ? '#fb923c' : '#94a3c4';
-  const text = trend === 'up' ? 'Растёт — погода улучшается'
-    : trend === 'down' ? 'Падает — возможно ухудшение' : 'Стабильное';
+  const text = trend === 'up' ? t('weather.trendUp')
+    : trend === 'down' ? t('weather.trendDown') : t('weather.trendStable');
 
   const min = Math.min(...series.filter((v): v is number => v != null));
   const max = Math.max(...series.filter((v): v is number => v != null));
@@ -306,7 +309,7 @@ export function PressurePanel({ hours, current, delay = 0 }: {
       <div className="flex items-end justify-between">
         <div className="flex items-baseline gap-1.5">
           <span className="font-mono text-4xl font-bold">{Math.round(current)}</span>
-          <span className="text-sm text-[var(--text-dim)]">гПа</span>
+          <span className="text-sm text-[var(--text-dim)]">{t('units.hpa')}</span>
         </div>
         <div className="flex items-center gap-1.5 text-sm font-semibold" style={{ color }}>
           <TrendIcon size={16} />
@@ -325,6 +328,7 @@ export function PressurePanel({ hours, current, delay = 0 }: {
 export function MetricTiles({ data, hours, delay = 0 }: {
   data: ForecastBundle; hours: HourPoint[]; delay?: number;
 }) {
+  const { t } = useTranslation();
   const c = data.forecast.current;
   const h = data.forecast.hourly;
   const idx = 0;
@@ -333,13 +337,13 @@ export function MetricTiles({ data, hours, delay = 0 }: {
   const tiles = [
     { icon: Droplets, label: 'Влажность', value: `${c.relative_humidity_2m}%`, color: '#4ade80' },
     {
-      icon: Thermometer, label: 'Точка росы',
+      icon: Thermometer, label: t('weather.dewPoint'),
       value: `${Math.round(nowHour?.temp != null ? (h.dew_point_2m?.[0] ?? 0) : 0)}°`,
       color: '#22d3ee',
     },
-    { icon: Cloud, label: 'Облачность', value: `${c.cloud_cover}%`, color: '#94a3c4' },
+    { icon: Cloud, label: t('weather.cloudiness'), value: `${c.cloud_cover}%`, color: '#94a3c4' },
     {
-      icon: Eye, label: 'Видимость',
+      icon: Eye, label: t('weather.visibility'),
       value: `${Math.round((h.visibility?.[0] ?? 0) / 1000)} км`, color: '#c084fc',
     },
     {
@@ -347,7 +351,7 @@ export function MetricTiles({ data, hours, delay = 0 }: {
       value: `${Math.round(h.cape?.[0] ?? 0)} Дж/кг`, color: '#facc15',
     },
     {
-      icon: Timer, label: 'Приземное давл.',
+      icon: Timer, label: t('weather.surfacePressure'),
       value: `${Math.round(Number(c.surface_pressure))}`, color: '#a78bfa',
     },
   ];

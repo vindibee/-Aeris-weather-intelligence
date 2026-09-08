@@ -44,7 +44,7 @@ export default function ExtremesHunter() {
   const active = KINDS.find((k) => k.key === kind);
 
   const tempUnit = units === 'imperial' ? '°F' : '°C';
-  const windUnit = units === 'imperial' ? 'миль/ч' : 'км/ч';
+  const windUnit = units === 'imperial' ? t('units.mph') : t('units.kmh');
 
   const markers = useMemo<GlobeMarker[]>(() => {
     if (!best) return [];
