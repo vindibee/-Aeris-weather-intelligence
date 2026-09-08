@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import {
   Wind, Droplets, Gauge, Sun, Thermometer, CloudRain, Shirt, MapPin, Eye,
@@ -6,7 +7,7 @@ import {
 import { api, type ForecastBundle } from '../../lib/api';
 import { useApp } from '../../lib/store';
 import { useDaily, useHourly } from '../../hooks/useWeather';
-import { codeEmoji, codeInfo, tempColor } from '../../lib/weather';
+import { codeLabelKey, codeEmoji, codeInfo, tempColor } from '../../lib/weather';
 import { pickOutfit, SLOT_TITLES, type OutfitSlot } from '../../lib/outfit';
 import { LoadingPanel, ErrorPanel } from '../ui';
 import Avatar3D from '../wardrobe/Avatar3D';
@@ -37,6 +38,7 @@ export interface CityRef {
 const SLOT_ORDER: OutfitSlot[] = ['outer', 'mid', 'legs', 'head', 'shoes', 'accessory'];
 
 export default function CityDashboard({ city }: { city: CityRef }) {
+  const { t } = useTranslation();
   const units = useApp((s) => s.units);
   const user = useApp((s) => s.user);
 
@@ -121,7 +123,7 @@ export default function CityDashboard({ city }: { city: CityRef }) {
                   >
                     {Math.round(cur.temperature_2m)}{tempUnit}
                   </div>
-                  <div className="mt-1.5 text-sm text-[var(--text-dim)]">{info.label}</div>
+                  <div className="mt-1.5 text-sm text-[var(--text-dim)]">{t(codeLabelKey(info))}</div>
                   <div className="text-xs text-[var(--text-dim)]">
                     ощущается как {Math.round(cur.apparent_temperature)}{tempUnit}
                   </div>

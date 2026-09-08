@@ -1,4 +1,5 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -6,7 +7,7 @@ import {
 } from 'lucide-react';
 import { api, type ExtremeKind, type ExtremesResponse } from '../../lib/api';
 import { useApp } from '../../lib/store';
-import { codeEmoji, codeInfo, tempColor } from '../../lib/weather';
+import { codeLabelKey, codeEmoji, codeInfo, tempColor } from '../../lib/weather';
 import { LoadingPanel, Spinner } from '../ui';
 import type { GlobeMarker } from '../Globe3D';
 
@@ -27,6 +28,7 @@ const KINDS: { key: ExtremeKind; label: string; icon: typeof Flame; color: strin
 ];
 
 export default function ExtremesHunter() {
+  const { t } = useTranslation();
   const units = useApp((s) => s.units);
   const setPlace = useApp((s) => s.setPlace);
   const [kind, setKind] = useState<ExtremeKind | null>(null);
@@ -192,7 +194,7 @@ export default function ExtremesHunter() {
                 </div>
 
                 <p className="mt-3 text-xs text-[var(--text-dim)]">
-                  {codeInfo(best.code ?? 0).label}
+                  {t(codeLabelKey(codeInfo(best.code ?? 0)))}
                   {best.localTime && (
                     <span className="ml-2 inline-flex items-center gap-1">
                       <Clock size={10} />

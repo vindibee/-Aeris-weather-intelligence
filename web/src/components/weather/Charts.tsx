@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Area, AreaChart, Bar, BarChart, CartesianGrid, ComposedChart, Line,
@@ -6,7 +7,7 @@ import {
 } from 'recharts';
 import { Thermometer, CloudRain, Wind, Droplets, Gauge, Sun } from 'lucide-react';
 import type { DayPoint, HourPoint } from '../../hooks/useWeather';
-import { codeEmoji, codeInfo, tempColor, windDir } from '../../lib/weather';
+import { codeShortKey, codeEmoji, codeInfo, tempColor, windDir } from '../../lib/weather';
 
 type Metric = 'temp' | 'precip' | 'wind' | 'humidity' | 'pressure' | 'uv';
 
@@ -20,6 +21,7 @@ const METRICS: { key: Metric; label: string; icon: typeof Wind; color: string; u
 ];
 
 function ChartTooltip({ active, payload, label, metric }: any) {
+  const { t } = useTranslation();
   if (!active || !payload?.length) return null;
   const p: HourPoint = payload[0].payload;
   const m = METRICS.find((x) => x.key === metric)!;
@@ -28,7 +30,7 @@ function ChartTooltip({ active, payload, label, metric }: any) {
       <div className="flex items-center gap-2 font-semibold">
         <span>{codeEmoji(p.code, !!p.isDay)}</span>
         <span>{label}</span>
-        <span className="text-xs text-[var(--text-dim)]">{codeInfo(p.code).short}</span>
+        <span className="text-xs text-[var(--text-dim)]">{t(codeShortKey(codeInfo(p.code)))}</span>
       </div>
       <div className="mt-2 space-y-1 font-mono text-xs">
         <div style={{ color: m.color }}>
@@ -201,6 +203,7 @@ export function HourlyChart({ hours }: { hours: HourPoint[] }) {
 /* ------------------------------------------------------------------ */
 
 export function DailyForecast({ days, units }: { days: DayPoint[]; units: 'metric' | 'imperial' }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState(0);
   const maxes = days.map((d) => d.max ?? 0);
   const mins = days.map((d) => d.min ?? 0);
@@ -276,7 +279,7 @@ export function DailyForecast({ days, units }: { days: DayPoint[]; units: 'metri
           >
             <div className="mt-5 grid grid-cols-2 gap-3 border-t border-white/8 pt-5 sm:grid-cols-4">
               {[
-                ['Условия', codeInfo(day.code).short],
+                ['Условия', t(codeShortKey(codeInfo(day.code)))],
                 ['Осадки', `${(day.precipSum ?? 0).toFixed(1)} мм · ${day.precipProb ?? 0}%`],
                 ['Ветер', `${Math.round(day.windMax ?? 0)} · порывы ${Math.round(day.gustMax ?? 0)}`],
                 ['UV макс.', `${(day.uvMax ?? 0).toFixed(1)}`],

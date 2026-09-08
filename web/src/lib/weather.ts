@@ -4,48 +4,66 @@ export type Sky =
   | 'clear' | 'partly' | 'cloudy' | 'fog'
   | 'drizzle' | 'rain' | 'snow' | 'thunder';
 
+/**
+ * Идентификатор погодного явления.
+ *
+ * Раньше здесь лежали готовые русские подписи, из-за чего сводки оставались
+ * русскими при любом выбранном языке. Теперь модуль хранит только смысл, а
+ * текст берётся из словаря по ключам `wmo.<id>` и `wmo.<id>Short`.
+ */
+export type WeatherCodeId =
+  | 'clear' | 'mainly' | 'partly' | 'overcast' | 'fog' | 'rime'
+  | 'drizzle' | 'drizzleHeavy' | 'freezing'
+  | 'rainLight' | 'rain' | 'rainHeavy' | 'showers' | 'showersHeavy'
+  | 'snowLight' | 'snow' | 'snowHeavy' | 'snowGrains'
+  | 'snowShowers' | 'snowShowersHeavy'
+  | 'thunder' | 'hail';
+
 export interface CodeInfo {
-  label: string;
-  short: string;
+  id: WeatherCodeId;
   sky: Sky;
   /** gradient stops for cards / hero backdrops */
   gradient: [string, string];
   accent: string;
 }
 
-const C = (
-  label: string, short: string, sky: Sky, gradient: [string, string], accent: string
-): CodeInfo => ({ label, short, sky, gradient, accent });
+/** Ключи словаря для полной и краткой подписи. */
+export const codeLabelKey = (info: CodeInfo) => `wmo.${info.id}`;
+export const codeShortKey = (info: CodeInfo) => `wmo.${info.id}Short`;
 
-const CLEAR = C('Ясно', 'Ясно', 'clear', ['#1d5cff', '#7df2ff'], '#7df2ff');
-const MAINLY = C('Преимущественно ясно', 'Малооблачно', 'partly', ['#2a5fd0', '#8fd8ff'], '#9fe4ff');
-const PARTLY = C('Переменная облачность', 'Облачно с прояснениями', 'partly', ['#31456f', '#8ba6d6'], '#b9cdf0');
-const OVERCAST = C('Пасмурно', 'Пасмурно', 'cloudy', ['#2b3450', '#6a7a9c'], '#c3ceE4');
-const FOG = C('Туман', 'Туман', 'fog', ['#3a4258', '#8e97a8'], '#d3d9e6');
-const DRIZZLE = C('Морось', 'Морось', 'drizzle', ['#25405f', '#5f9ec0'], '#8fd0e8');
-const RAIN = C('Дождь', 'Дождь', 'rain', ['#1b2d47', '#3f7fa8'], '#63b3ea');
-const HEAVY_RAIN = C('Сильный дождь', 'Ливень', 'rain', ['#141f33', '#2f5f85'], '#4aa3e0');
-const FREEZING = C('Ледяной дождь', 'Гололёд', 'rain', ['#243b52', '#79b8d4'], '#a8e2f5');
-const SNOW = C('Снег', 'Снег', 'snow', ['#3d4a68', '#cfe0f5'], '#e6f1ff');
-const SHOWERS = C('Ливневый дождь', 'Ливень', 'rain', ['#182a44', '#3c7ba6'], '#5cb0e8');
-const THUNDER = C('Гроза', 'Гроза', 'thunder', ['#221b3f', '#5b4a9e'], '#c4a6ff');
-const HAIL = C('Гроза с градом', 'Град', 'thunder', ['#1b1733', '#4b3f8c'], '#d7c4ff');
+const C = (
+  id: WeatherCodeId, sky: Sky, gradient: [string, string], accent: string
+): CodeInfo => ({ id, sky, gradient, accent });
+
+const CLEAR = C('clear', 'clear', ['#1d5cff', '#7df2ff'], '#7df2ff');
+const MAINLY = C('mainly', 'partly', ['#2a5fd0', '#8fd8ff'], '#9fe4ff');
+const PARTLY = C('partly', 'partly', ['#31456f', '#8ba6d6'], '#b9cdf0');
+const OVERCAST = C('overcast', 'cloudy', ['#2b3450', '#6a7a9c'], '#c3ceE4');
+const FOG = C('fog', 'fog', ['#3a4258', '#8e97a8'], '#d3d9e6');
+const DRIZZLE = C('drizzle', 'drizzle', ['#25405f', '#5f9ec0'], '#8fd0e8');
+const RAIN = C('rain', 'rain', ['#1b2d47', '#3f7fa8'], '#63b3ea');
+const HEAVY_RAIN = C('rainHeavy', 'rain', ['#141f33', '#2f5f85'], '#4aa3e0');
+const FREEZING = C('freezing', 'rain', ['#243b52', '#79b8d4'], '#a8e2f5');
+const SNOW = C('snow', 'snow', ['#3d4a68', '#cfe0f5'], '#e6f1ff');
+const SHOWERS = C('showers', 'rain', ['#182a44', '#3c7ba6'], '#5cb0e8');
+const THUNDER = C('thunder', 'thunder', ['#221b3f', '#5b4a9e'], '#c4a6ff');
+const HAIL = C('hail', 'thunder', ['#1b1733', '#4b3f8c'], '#d7c4ff');
 
 export const WMO: Record<number, CodeInfo> = {
   0: CLEAR,
   1: MAINLY, 2: PARTLY, 3: OVERCAST,
-  45: FOG, 48: C('Изморозь', 'Изморозь', 'fog', ['#39445c', '#9aa6bb'], '#dbe3f0'),
-  51: DRIZZLE, 53: DRIZZLE, 55: C('Сильная морось', 'Морось', 'drizzle', ['#20374f', '#5793b5'], '#8fd0e8'),
+  45: FOG, 48: C('rime', 'fog', ['#39445c', '#9aa6bb'], '#dbe3f0'),
+  51: DRIZZLE, 53: DRIZZLE, 55: C('drizzleHeavy', 'drizzle', ['#20374f', '#5793b5'], '#8fd0e8'),
   56: FREEZING, 57: FREEZING,
-  61: C('Небольшой дождь', 'Дождь', 'rain', ['#1e3350', '#4a89b3'], '#6dbcf0'),
+  61: C('rainLight', 'rain', ['#1e3350', '#4a89b3'], '#6dbcf0'),
   63: RAIN, 65: HEAVY_RAIN,
   66: FREEZING, 67: FREEZING,
-  71: C('Небольшой снег', 'Снег', 'snow', ['#414d6b', '#dbe8fa'], '#eef5ff'),
-  73: SNOW, 75: C('Сильный снегопад', 'Снегопад', 'snow', ['#333e5c', '#c2d6f0'], '#e6f1ff'),
-  77: C('Снежные зёрна', 'Снег', 'snow', ['#3b4765', '#d2e2f5'], '#eaf3ff'),
-  80: SHOWERS, 81: SHOWERS, 82: C('Сильный ливень', 'Ливень', 'rain', ['#101a2c', '#2a5c85'], '#3f9ad9'),
-  85: C('Снежный ливень', 'Снег', 'snow', ['#374362', '#c8daf2'], '#e9f2ff'),
-  86: C('Сильный снежный ливень', 'Метель', 'snow', ['#2e3a58', '#b8cdec'], '#e2eeff'),
+  71: C('snowLight', 'snow', ['#414d6b', '#dbe8fa'], '#eef5ff'),
+  73: SNOW, 75: C('snowHeavy', 'snow', ['#333e5c', '#c2d6f0'], '#e6f1ff'),
+  77: C('snowGrains', 'snow', ['#3b4765', '#d2e2f5'], '#eaf3ff'),
+  80: SHOWERS, 81: SHOWERS, 82: C('showersHeavy', 'rain', ['#101a2c', '#2a5c85'], '#3f9ad9'),
+  85: C('snowShowers', 'snow', ['#374362', '#c8daf2'], '#e9f2ff'),
+  86: C('snowShowersHeavy', 'snow', ['#2e3a58', '#b8cdec'], '#e2eeff'),
   95: THUNDER, 96: HAIL, 99: HAIL,
 };
 

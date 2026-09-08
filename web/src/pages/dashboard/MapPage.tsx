@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Thermometer, Cloud, CloudRain, Droplets, Wind, Layers, Play, Pause,
@@ -7,7 +8,7 @@ import {
 import { useApp } from '../../lib/store';
 import { useLocationMutations, useRadar } from '../../hooks/useWeather';
 import { api, type GeoFallback, type GridResponse } from '../../lib/api';
-import { codeEmoji, codeInfo, tempColor, windDir, windLabel } from '../../lib/weather';
+import { codeLabelKey, codeEmoji, codeInfo, tempColor, windDir, windLabel } from '../../lib/weather';
 import { LoadingPanel, Spinner } from '../../components/ui';
 import { useCityDashboard } from '../../components/city/CityDashboardProvider';
 import FavouriteButton from '../../components/weather/FavouriteButton';
@@ -31,6 +32,7 @@ const WIND_LEGEND: [number, string][] = [
 function PointCard({
   point, onClose,
 }: { point: { lat: number; lon: number }; onClose: () => void }) {
+  const { t } = useTranslation();
   const units = useApp((s) => s.units);
   const setPlace = useApp((s) => s.setPlace);
   const { openCity } = useCityDashboard();
@@ -109,7 +111,7 @@ function PointCard({
               <div className="font-mono text-3xl font-bold" style={{ color: tempColor(cur.temperature_2m, units) }}>
                 {Math.round(cur.temperature_2m)}°
               </div>
-              <div className="text-xs text-[var(--text-dim)]">{info.label}</div>
+              <div className="text-xs text-[var(--text-dim)]">{t(codeLabelKey(info))}</div>
             </div>
           </div>
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,7 +9,7 @@ import { useApp, fromGeo } from '../../lib/store';
 import {
   useGeocode, useLocationMutations, useLocationsWeather, useSavedLocations,
 } from '../../hooks/useWeather';
-import { codeEmoji, codeInfo, tempColor } from '../../lib/weather';
+import { codeShortKey, codeEmoji, codeInfo, tempColor } from '../../lib/weather';
 import { LoadingPanel } from '../../components/ui';
 import { useCityDashboard } from '../../components/city/CityDashboardProvider';
 import type { GeoResult, SavedLocation } from '../../lib/api';
@@ -95,6 +96,7 @@ function AddDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
 }
 
 export default function LocationsPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const units = useApp((s) => s.units);
   const setPlace = useApp((s) => s.setPlace);
@@ -200,7 +202,7 @@ export default function LocationsPage() {
                               <div className="font-mono text-4xl font-bold text-white">
                                 {Math.round(cur.temperature_2m)}°
                               </div>
-                              <div className="text-xs text-white/70">{info.short}</div>
+                              <div className="text-xs text-white/70">{t(codeShortKey(info))}</div>
                             </div>
                           </div>
                           <div className="text-right text-xs text-white/70">

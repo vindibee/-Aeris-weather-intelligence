@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   MapPin, Wind, Droplets, Gauge, Eye, Thermometer, CloudRain, Sunrise, Sunset,
   RefreshCw, Star, Check,
 } from 'lucide-react';
 import FavouriteButton from './FavouriteButton';
 import type { ForecastBundle } from '../../lib/api';
-import { codeInfo, codeEmoji, tempColor, windDir, windLabel } from '../../lib/weather';
+import { codeLabelKey, codeInfo, codeEmoji, tempColor, windDir, windLabel } from '../../lib/weather';
 import { WeatherFX } from '../Atmosphere';
 import type { DayPoint } from '../../hooks/useWeather';
 
@@ -25,6 +26,7 @@ const time = (iso: string) => (iso ? iso.slice(11, 16) : '—');
 export default function CurrentHero({
   data, place, today, onRefresh, refreshing, saved, onSave, savePending,
 }: Props) {
+  const { t } = useTranslation();
   const c = data.forecast.current;
   const u = data.forecast.current_units;
   const info = codeInfo(c.weather_code as number);
@@ -124,7 +126,7 @@ export default function CurrentHero({
                 </motion.span>
                 <span className="mt-2 text-3xl font-light text-white/70">{u.temperature_2m}</span>
               </div>
-              <div className="mt-2 text-lg font-semibold text-white/95">{info.label}</div>
+              <div className="mt-2 text-lg font-semibold text-white/95">{t(codeLabelKey(info))}</div>
               {today && (
                 <div className="mt-1 flex items-center gap-3 text-sm text-white/70">
                   <span style={{ color: tempColor(today.max ?? 0, data.units) }}>
