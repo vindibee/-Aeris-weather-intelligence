@@ -1,8 +1,33 @@
 import jwt from 'jsonwebtoken';
 import { db } from './db.js';
 
-export const JWT_SECRET =
-  process.env.JWT_SECRET || 'aeris-dev-secret-change-me-in-production-2026';
+export const isProd = process.env.NODE_ENV === 'production';
+
+/*
+ * Дев-заглушка лежит в публичном репозитории, поэтому в проде она равносильна
+ * отсутствию подписи: зная строку, кто угодно выпишет себе токен любого
+ * пользователя. Раньше здесь был молчаливый `||`-фолбэк — забытая переменная
+ * окружения тихо открывала вход всем. Теперь в проде процесс просто не
+ * стартует, а в деве всё работает как прежде.
+ */
+const DEV_SECRET = 'aeris-dev-secret-change-me-in-production-2026';
+const MIN_SECRET_LEN = 32;
+
+function resolveSecret() {
+  const fromEnv = process.env.JWT_SECRET?.trim();
+
+  if (!isProd) return fromEnv || DEV_SECRET;
+
+  if (!fromEnv || fromEnv === DEV_SECRET || fromEnv.length < MIN_SECRET_LEN) {
+    throw new Error(
+      `JWT_SECRET обязателен в production: случайная строка от ${MIN_SECRET_LEN} символов. ` +
+      'Сгенерировать: node -e "console.log(require(\'crypto\').randomBytes(48).toString(\'base64url\'))"'
+    );
+  }
+  return fromEnv;
+}
+
+export const JWT_SECRET = resolveSecret();
 const TTL = '7d';
 export const COOKIE = 'aeris_token';
 
@@ -12,7 +37,9 @@ export const signToken = (user) =>
 export const cookieOptions = {
   httpOnly: true,
   sameSite: 'lax',
-  secure: false, // local dev over http
+  // в проде сайт всегда за HTTPS, в деве — http://localhost, где secure-кука
+  // браузером просто не сохранится
+  secure: isProd,
   maxAge: 7 * 24 * 60 * 60 * 1000,
   path: '/',
 };

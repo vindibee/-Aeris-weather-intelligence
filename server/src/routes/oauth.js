@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { Router } from 'express';
 import { z } from 'zod';
 import { db, publicUser } from '../lib/db.js';
@@ -12,6 +13,34 @@ export const oauthRouter = Router();
 const WEB_ORIGIN = process.env.WEB_ORIGIN || 'http://localhost:5173';
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
 const BOT_USERNAME = process.env.TELEGRAM_BOT_USERNAME || '';
+
+/*
+ * BOT_API_SECRET — фактически мастер-ключ: по нему /telegram/issue выдаёт код
+ * входа в любой аккаунт. Слабое значение здесь дороже, чем где-либо ещё,
+ * поэтому в проде требуем длину, а не полагаемся на добрую волю.
+ */
+const BOT_SECRET = (process.env.BOT_API_SECRET || '').trim();
+if (process.env.NODE_ENV === 'production' && BOT_TOKEN && BOT_SECRET.length < 32) {
+  throw new Error('BOT_API_SECRET обязателен в production: случайная строка от 32 символов');
+}
+
+/*
+ * Вторая линия защиты того же маршрута: запрос должен прийти с самой машины —
+ * бот и API живут рядом. Смотрим адрес сокета, а не req.ip: X-Forwarded-For
+ * клиент подделывает, адрес сокета нет. BOT_ISSUE_ALLOW_REMOTE=1 — осознанная
+ * лазейка на случай, когда бот вынесен на другой хост.
+ */
+const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
+const ALLOW_REMOTE_ISSUE = process.env.BOT_ISSUE_ALLOW_REMOTE === '1';
+const isLocalCall = (req) => LOOPBACK.has(req.socket?.remoteAddress ?? '');
+
+/** Сравнение секретов, постоянное по времени. */
+function secretMatches(provided, expected) {
+  if (!expected || !provided) return false;
+  const a = Buffer.from(String(provided));
+  const b = Buffer.from(expected);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
 
 /**
  * Одноразовые state для Google-редиректа.
@@ -152,17 +181,22 @@ oauthRouter.post('/telegram/code', (req, res) => {
  * фактически позволяет войти в любой аккаунт — снаружи он быть открытым не должен.
  */
 oauthRouter.post('/telegram/issue', (req, res) => {
-  const secret = process.env.BOT_API_SECRET || '';
-  if (!secret || req.get('x-bot-secret') !== secret) {
+  if (!ALLOW_REMOTE_ISSUE && !isLocalCall(req)) {
+    return res.status(403).json({ error: 'Маршрут доступен только с локального хоста' });
+  }
+  if (!secretMatches(req.get('x-bot-secret'), BOT_SECRET)) {
     return res.status(403).json({ error: 'Недействительный секрет бота' });
   }
 
+  // nullish, а не optional: Telegram отдаёт отсутствующие поля как null, и
+  // строгий optional() заворачивал профиль любого пользователя без фамилии
+  // или юзернейма — кнопка «Войти на сайте» падала с «Некорректный профиль».
   const schema = z.object({
     id: z.union([z.string(), z.number()]),
-    first_name: z.string().optional(),
-    last_name: z.string().optional(),
-    username: z.string().optional(),
-    photo_url: z.string().optional(),
+    first_name: z.string().nullish(),
+    last_name: z.string().nullish(),
+    username: z.string().nullish(),
+    photo_url: z.string().nullish(),
   });
   const parsed = schema.safeParse(req.body ?? {});
   if (!parsed.success) return res.status(400).json({ error: 'Некорректный профиль Telegram' });

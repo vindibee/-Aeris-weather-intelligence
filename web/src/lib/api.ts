@@ -200,10 +200,26 @@ export class ApiError extends Error {
 }
 
 const TOKEN_KEY = 'aeris_token';
+/*
+ * Токен живёт только в памяти вкладки.
+ *
+ * Сессию через перезагрузку держит httpOnly-кука, которую JavaScript не читает.
+ * Пока рядом лежала копия в localStorage, кука теряла смысл: любой XSS забирал
+ * оттуда готовый Bearer сразу на неделю. Ключ прошлых версий вычищаем на
+ * старте, чтобы уже сохранённые токены не остались лежать в браузерах.
+ */
+try {
+  localStorage.removeItem(TOKEN_KEY);
+} catch {
+  /* приватный режим — localStorage может быть недоступен */
+}
+
+let memoryToken: string | null = null;
+
 export const tokenStore = {
-  get: () => localStorage.getItem(TOKEN_KEY),
-  set: (t: string) => localStorage.setItem(TOKEN_KEY, t),
-  clear: () => localStorage.removeItem(TOKEN_KEY),
+  get: () => memoryToken,
+  set: (t: string) => { memoryToken = t; },
+  clear: () => { memoryToken = null; },
 };
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {

@@ -15,6 +15,20 @@ const limiter = rateLimit({
   message: { error: 'Слишком много попыток. Попробуйте через несколько минут.' },
 });
 
+/*
+ * Вход выносим под отдельный, куда более жёсткий лимит: 120 попыток за 10
+ * минут — это комфортный темп для перебора паролей. Удачные входы лимит не
+ * расходуют, поэтому живому человеку ограничение незаметно.
+ */
+const loginLimiter = rateLimit({
+  windowMs: 10 * 60_000,
+  limit: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  message: { error: 'Слишком много попыток входа. Попробуйте через 10 минут.' },
+});
+
 const registerSchema = z.object({
   name: z.string().trim().min(2, 'Имя минимум 2 символа').max(60),
   email: z.string().trim().toLowerCase().email('Некорректный email'),
@@ -57,7 +71,7 @@ authRouter.post('/register', limiter, (req, res) => {
   res.status(201).json({ user: publicUser(user), token });
 });
 
-authRouter.post('/login', limiter, (req, res) => {
+authRouter.post('/login', loginLimiter, (req, res) => {
   const parsed = loginSchema.safeParse(req.body ?? {});
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
   const { email, password } = parsed.data;

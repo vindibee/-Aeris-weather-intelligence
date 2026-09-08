@@ -14,6 +14,14 @@ import { oauthRouter } from './routes/oauth.js';
 import { locationsRouter } from './routes/locations.js';
 
 const PORT = Number(process.env.PORT ?? 4000);
+const IS_PROD = process.env.NODE_ENV === 'production';
+
+// В проде список origin'ов должен быть объявлен явно: дефолт с localhost там
+// заведомо неверен, а молча пустить всё — худший из вариантов.
+if (IS_PROD && !process.env.CORS_ORIGINS?.trim()) {
+  throw new Error('CORS_ORIGINS обязателен в production, например: https://aeris.example.com');
+}
+
 const ORIGINS = (process.env.CORS_ORIGINS ??
   'http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173')
   .split(',').map((s) => s.trim()).filter(Boolean);
@@ -27,6 +35,9 @@ const LAN_HOST = /^(?:localhost|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|192\.168\.\
 function isAllowedOrigin(origin) {
   if (!origin) return true;            // curl, health-чеки, same-origin
   if (ORIGINS.includes(origin)) return true;
+  // Послабление для локальной сети — сугубо про удобство разработки с телефона.
+  // В проде оно не нужно и работает только явный вайтлист.
+  if (IS_PROD) return false;
   try {
     const u = new URL(origin);
     return u.protocol === 'http:' && DEV_PORTS.has(u.port) && LAN_HOST.test(u.hostname);

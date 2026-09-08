@@ -97,8 +97,18 @@ function migrate() {
 
 migrate();
 
-/** Seed a demo account + a few showcase locations on first boot. */
+/**
+ * Seed a demo account + a few showcase locations on first boot.
+ *
+ * Пароль демо-аккаунта напечатан прямо на странице входа — для локального
+ * запуска это удобство, в публичном интернете это общедоступная учётка, в
+ * которую пишут все подряд. Поэтому в проде она заводится только по явному
+ * SEED_DEMO=1.
+ */
 export function seed() {
+  const allowed = process.env.NODE_ENV !== 'production' || process.env.SEED_DEMO === '1';
+  if (!allowed) return;
+
   const exists = db.prepare('SELECT id FROM users WHERE email = ?').get('demo@aeris.app');
   if (exists) return;
 
