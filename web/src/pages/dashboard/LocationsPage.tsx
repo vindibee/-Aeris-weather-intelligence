@@ -15,6 +15,7 @@ import { useCityDashboard } from '../../components/city/CityDashboardProvider';
 import type { GeoResult, SavedLocation } from '../../lib/api';
 
 function AddDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t } = useTranslation();
   const [term, setTerm] = useState('');
   const { data: results, isFetching } = useGeocode(term);
   const { add } = useLocationMutations();
@@ -43,14 +44,14 @@ function AddDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="glass-strong fixed left-1/2 top-24 z-50 w-[min(92vw,460px)] -translate-x-1/2 rounded-3xl p-6 shadow-card"
           >
-            <h3 className="text-lg font-bold">Добавить локацию</h3>
+            <h3 className="text-lg font-bold">{t('locations.addTitle')}</h3>
             <div className="glass mt-4 flex items-center gap-3 rounded-2xl px-4 py-3">
               <Search size={16} className="text-[var(--text-dim)]" />
               <input
                 autoFocus
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
-                placeholder="Город, посёлок, регион…"
+                placeholder={t('locations.searchPlaceholder')}
                 className="w-full bg-transparent text-sm outline-none placeholder:text-[var(--text-dim)]"
               />
               {isFetching && <Loader2 size={15} className="animate-spin text-aqua-400" />}
@@ -81,12 +82,12 @@ function AddDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
                 </button>
               ))}
               {term.length >= 2 && !isFetching && !results?.length && (
-                <p className="py-6 text-center text-sm text-[var(--text-dim)]">Ничего не найдено</p>
+                <p className="py-6 text-center text-sm text-[var(--text-dim)]">{t('locations.nothingFound')}</p>
               )}
             </div>
 
             <button onClick={onClose} className="glass mt-4 w-full rounded-2xl py-2.5 text-sm font-semibold">
-              Закрыть
+              {t('locations.close')}
             </button>
           </motion.div>
         </>
@@ -106,7 +107,7 @@ export default function LocationsPage() {
   const { openCity } = useCityDashboard();
   const [adding, setAdding] = useState(false);
 
-  if (isLoading) return <LoadingPanel label="Загружаем ваши локации" />;
+  if (isLoading) return <LoadingPanel label={t('locations.loading')} />;
 
   // Клик по карточке открывает общую сводку — тот же экран, что с глобуса и
   // из поиска. Кнопка «Открыть в кабинете» осталась для перехода на обзор.
@@ -121,10 +122,10 @@ export default function LocationsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Мои локации</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{t('locations.title')}</h1>
           <p className="mt-1 text-sm text-[var(--text-dim)]">
-            {locations?.length ?? 0} из 25 · данные обновляются каждые 10 минут
-            {isFetching && <span className="ml-2 text-aqua-300">обновляем…</span>}
+            {t('locations.counter', { count: locations?.length ?? 0 })}
+            {isFetching && <span className="ml-2 text-aqua-300">{t('locations.refreshing')}</span>}
           </p>
         </div>
         <button
@@ -132,7 +133,7 @@ export default function LocationsPage() {
           className="flex items-center gap-2 rounded-full bg-gradient-to-r from-aqua-400 to-violet-500 px-5 py-3 text-sm font-bold text-ink-950 shadow-glow transition hover:scale-[1.03]"
         >
           <Plus size={17} />
-          Добавить город
+          {t('locations.addCity')}
         </button>
       </div>
 
@@ -140,16 +141,16 @@ export default function LocationsPage() {
         <div className="glass flex flex-col items-center gap-4 rounded-3xl py-20 text-center">
           <Star size={34} className="text-amber-400" />
           <div>
-            <p className="text-lg font-bold">Пока пусто</p>
+            <p className="text-lg font-bold">{t('locations.empty')}</p>
             <p className="mt-1 text-sm text-[var(--text-dim)]">
-              Добавьте города, за погодой в которых хотите следить
+              {t('locations.emptyHint')}
             </p>
           </div>
           <button
             onClick={() => setAdding(true)}
             className="rounded-full bg-gradient-to-r from-aqua-400 to-violet-500 px-6 py-3 text-sm font-bold text-ink-950"
           >
-            Добавить первый город
+            {t('locations.addFirst')}
           </button>
         </div>
       ) : (
@@ -187,7 +188,7 @@ export default function LocationsPage() {
                       <button
                         onClick={() => remove.mutate(l.id)}
                         className="shrink-0 rounded-lg p-2 text-white/40 opacity-0 transition hover:bg-rose-500/20 hover:text-rose-300 group-hover:opacity-100"
-                        title="Удалить"
+                        title={t('locations.remove')}
                       >
                         <Trash2 size={15} />
                       </button>
@@ -219,7 +220,7 @@ export default function LocationsPage() {
                           {(daily?.time ?? []).slice(0, 3).map((d: string, k: number) => (
                             <div key={d} className="flex-1 rounded-xl bg-white/12 px-2 py-1.5 text-center backdrop-blur-sm">
                               <div className="text-[9px] uppercase text-white/55">
-                                {k === 0 ? 'сег' : k === 1 ? 'завт' : 'послез'}
+                                {k === 0 ? t('locations.d0') : k === 1 ? t('locations.d1') : t('locations.d2')}
                               </div>
                               <div className="text-sm">{codeEmoji(daily.weather_code[k], true)}</div>
                               <div className="font-mono text-[11px] font-bold text-white">
@@ -240,7 +241,7 @@ export default function LocationsPage() {
                       onClick={() => open(l)}
                       className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/25 bg-white/12 py-2.5 text-xs font-bold text-white backdrop-blur-md transition hover:bg-white/22"
                     >
-                      Открыть прогноз
+                      {t('locations.openForecast')}
                       <ArrowRight size={14} />
                     </button>
                   </div>

@@ -17,17 +17,18 @@ import type { OverlayKind } from '../../components/weather/WeatherMap';
 
 const WeatherMap = lazy(() => import('../../components/weather/WeatherMap'));
 
-const OVERLAYS: { key: OverlayKind; label: string; icon: typeof Wind; color: string }[] = [
-  { key: 'temp', label: 'Температура', icon: Thermometer, color: '#fb923c' },
-  { key: 'precip', label: 'Осадки', icon: CloudRain, color: '#38bdf8' },
-  { key: 'clouds', label: 'Облачность', icon: Cloud, color: '#cbd5e1' },
-  { key: 'humidity', label: 'Влажность', icon: Droplets, color: '#4ade80' },
-  { key: 'none', label: 'Без слоя', icon: EyeOff, color: '#94a3c4' },
+/* Константа вне React: храним ключи, текст берём при отрисовке. */
+const OVERLAYS: { key: OverlayKind; labelKey: string; icon: typeof Wind; color: string }[] = [
+  { key: 'temp', labelKey: 'weather.temperature', icon: Thermometer, color: '#fb923c' },
+  { key: 'precip', labelKey: 'weather.precip', icon: CloudRain, color: '#38bdf8' },
+  { key: 'clouds', labelKey: 'weather.cloudiness', icon: Cloud, color: '#cbd5e1' },
+  { key: 'humidity', labelKey: 'weather.humidity', icon: Droplets, color: '#4ade80' },
+  { key: 'none', labelKey: 'map.noLayer', icon: EyeOff, color: '#94a3c4' },
 ];
 
 const TEMP_LEGEND = [-30, -20, -10, 0, 10, 20, 30, 40];
 const WIND_LEGEND: [number, string][] = [
-  [5, 'штиль'], [15, 'слабый'], [25, 'умеренный'], [40, 'сильный'], [60, 'шторм'], [80, 'ураган'],
+  [5, 'scale.calm'], [15, 'scale.lightBreeze'], [25, 'scale.moderateBreeze'], [40, 'scale.strongBreeze'], [60, 'scale.storm'], [80, 'scale.hurricane'],
 ];
 
 function PointCard({
@@ -102,7 +103,7 @@ function PointCard({
             <div className="mt-2 flex items-start gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-2.5 py-2 text-[11px] leading-snug text-amber-200">
               <Crosshair size={12} className="mt-0.5 shrink-0" />
               <span>
-                В этой точке наблюдений нет — показана ближайшая, в {fallback.distanceKm} км отсюда.
+                {t('map.fallbackNote', { km: fallback.distanceKm })}
               </span>
             </div>
           )}
@@ -118,19 +119,19 @@ function PointCard({
 
           <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
             <div className="rounded-xl bg-white/5 p-2.5">
-              <div className="text-[var(--text-dim)]">Ощущается</div>
+              <div className="text-[var(--text-dim)]">{t('weather.feelsLike')}</div>
               <div className="mt-0.5 font-mono font-bold">{Math.round(cur.apparent_temperature)}°</div>
             </div>
             <div className="rounded-xl bg-white/5 p-2.5">
-              <div className="text-[var(--text-dim)]">Ветер</div>
+              <div className="text-[var(--text-dim)]">{t('weather.wind')}</div>
               <div className="mt-0.5 font-mono font-bold">{Math.round(cur.wind_speed_10m)}</div>
             </div>
             <div className="rounded-xl bg-white/5 p-2.5">
-              <div className="text-[var(--text-dim)]">Влажность</div>
+              <div className="text-[var(--text-dim)]">{t('weather.humidity')}</div>
               <div className="mt-0.5 font-mono font-bold">{cur.relative_humidity_2m}%</div>
             </div>
             <div className="rounded-xl bg-white/5 p-2.5">
-              <div className="text-[var(--text-dim)]">Завтра</div>
+              <div className="text-[var(--text-dim)]">{t('map.tomorrow')}</div>
               <div className="mt-0.5 font-mono font-bold">
                 {Math.round(daily?.temperature_2m_min?.[1] ?? 0)}° / {Math.round(daily?.temperature_2m_max?.[1] ?? 0)}°
               </div>
@@ -145,14 +146,14 @@ function PointCard({
               onClick={() => openCity({ name, lat: point.lat, lon: point.lon })}
               className="w-full rounded-xl bg-gradient-to-r from-aqua-400 to-violet-500 py-2.5 text-xs font-bold text-ink-950 transition hover:scale-[1.02]"
             >
-              Полная сводка и Одеватор
+              {t('map.fullSummary')}
             </button>
             <div className="flex gap-2">
               <button
                 onClick={() => setPlace({ name, lat: point.lat, lon: point.lon })}
                 className="glass flex-1 rounded-xl py-2.5 text-xs font-semibold transition hover:border-aqua-400/40"
               >
-                Сделать основной
+                {t('map.makeMain')}
               </button>
               <FavouriteButton city={{ name, lat: point.lat, lon: point.lon }} />
             </div>
@@ -160,7 +161,7 @@ function PointCard({
         </>
       ) : (
         <div className="py-6 text-center text-sm text-[var(--text-dim)]">
-          Данных нет ни в этой точке, ни в радиусе 800 км
+          {t('map.noDataWide')}
         </div>
       )}
     </motion.div>
@@ -168,6 +169,7 @@ function PointCard({
 }
 
 export default function MapPage() {
+  const { t } = useTranslation();
   const place = useApp((s) => s.place);
   const theme = useApp((s) => s.theme);
   const [overlay, setOverlay] = useState<OverlayKind>('temp');
@@ -214,16 +216,16 @@ export default function MapPage() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Метео-карта</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{t('map.title')}</h1>
           <p className="mt-1 text-sm text-[var(--text-dim)]">
-            Кликните по любой точке, чтобы увидеть прогноз · слои обновляются при перемещении
+            {t('map.hint')}
           </p>
         </div>
         {stats && (
           <div className="glass flex gap-4 rounded-2xl px-4 py-2.5 text-xs">
             <div>
-              <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">В кадре</div>
-              <div className="font-mono font-bold">{stats.cells} точек</div>
+              <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">{t('map.inFrame')}</div>
+              <div className="font-mono font-bold">{t('map.points', { count: stats.cells })}</div>
             </div>
             <div>
               <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">Температура</div>
@@ -234,7 +236,7 @@ export default function MapPage() {
               </div>
             </div>
             <div>
-              <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">Макс. ветер</div>
+              <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">{t('map.maxWind')}</div>
               <div className="font-mono font-bold">{Math.round(stats.windMax)}</div>
             </div>
           </div>
@@ -257,7 +259,7 @@ export default function MapPage() {
                              style={{ background: o.color }} transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
               )}
               <o.icon size={14} className="relative" />
-              <span className="relative hidden sm:inline">{o.label}</span>
+              <span className="relative hidden sm:inline">{t(o.labelKey)}</span>
             </button>
           ))}
         </div>
@@ -269,7 +271,7 @@ export default function MapPage() {
           }`}
         >
           <Wind size={14} />
-          Потоки ветра
+          {t('map.windStreams')}
           <span className={`h-1.5 w-1.5 rounded-full ${showWind ? 'bg-aqua-400' : 'bg-white/25'}`} />
         </button>
 
@@ -280,7 +282,7 @@ export default function MapPage() {
           }`}
         >
           <Radar size={14} />
-          Радар осадков
+          {t('map.radarLayer')}
           <span className={`h-1.5 w-1.5 rounded-full ${radarOn ? 'bg-magenta-400' : 'bg-white/25'}`} />
         </button>
       </div>
@@ -312,7 +314,7 @@ export default function MapPage() {
               <div className="w-32 shrink-0 text-right">
                 <div className="font-mono text-sm font-bold text-magenta-400">{frameTime}</div>
                 <div className="text-[10px] text-[var(--text-dim)]">
-                  кадр {frameIdx + 1} / {frames.length}
+                  {t('map.frame', { current: frameIdx + 1, total: frames.length })}
                 </div>
               </div>
             </div>
@@ -322,7 +324,7 @@ export default function MapPage() {
 
       {/* map */}
       <div className="relative h-[calc(100svh-19rem)] min-h-[460px] w-full">
-        <Suspense fallback={<div className="glass grid h-full place-items-center rounded-3xl"><LoadingPanel label="Инициализируем карту" /></div>}>
+        <Suspense fallback={<div className="glass grid h-full place-items-center rounded-3xl"><LoadingPanel label={t('map.initializing')} /></div>}>
           <WeatherMap
             center={{ lat: place.lat, lon: place.lon }}
             overlay={overlay}
@@ -345,7 +347,7 @@ export default function MapPage() {
           {overlay === 'temp' && (
             <>
               <div className="mb-2 text-[10px] font-bold uppercase tracking-wider text-[var(--text-dim)]">
-                Температура, °C
+                {t('map.legendTemp')}
               </div>
               <div className="flex h-3 w-44 overflow-hidden rounded-full">
                 {TEMP_LEGEND.map((t) => (
@@ -360,13 +362,13 @@ export default function MapPage() {
           {showWind && (
             <div className={overlay === 'temp' ? 'mt-3.5 border-t border-white/8 pt-3' : ''}>
               <div className="mb-2 text-[10px] font-bold uppercase tracking-wider text-[var(--text-dim)]">
-                Ветер, км/ч
+                {t('map.legendWind')}
               </div>
               <div className="space-y-1">
-                {WIND_LEGEND.map(([v, label]) => (
+                {WIND_LEGEND.map(([v, labelKey]) => (
                   <div key={v} className="flex items-center gap-2 text-[10px]">
                     <span className="h-0.5 w-6 rounded-full" style={{ background: windColorOf(v) }} />
-                    <span className="text-[var(--text-dim)]">{label}</span>
+                    <span className="text-[var(--text-dim)]">{t(labelKey)}</span>
                   </div>
                 ))}
               </div>

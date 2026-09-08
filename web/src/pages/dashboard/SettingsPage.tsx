@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
@@ -27,14 +28,16 @@ function Section({ title, icon: Icon, children, delay = 0 }: {
   );
 }
 
+/* Константа вне React: храним ключи, текст берём при отрисовке. */
 const KIND_LABELS: Record<string, string> = {
-  account_created: 'Аккаунт создан',
-  login: 'Вход в систему',
-  location_added: 'Добавлена локация',
-  location_removed: 'Удалена локация',
+  account_created: 'settings.actCreated',
+  login: 'settings.actLogin',
+  location_added: 'settings.actAdded',
+  location_removed: 'settings.actRemoved',
 };
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
   const user = useApp((s) => s.user);
   const setUser = useApp((s) => s.setUser);
   const units = useApp((s) => s.units);
@@ -89,12 +92,12 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Настройки</h1>
-        <p className="mt-1 text-sm text-[var(--text-dim)]">Профиль, единицы измерения и оформление</p>
+        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{t('nav.settings')}</h1>
+        <p className="mt-1 text-sm text-[var(--text-dim)]">{t('settings.subtitle')}</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Section title="Профиль" icon={UserIcon}>
+        <Section title={t('settings.profile')} icon={UserIcon}>
           <div className="flex items-center gap-4">
             <div
               className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl text-xl font-bold text-ink-950"
@@ -108,15 +111,15 @@ export default function SettingsPage() {
               <div className="truncate text-lg font-bold">{user?.name}</div>
               <div className="truncate text-sm text-[var(--text-dim)]">{user?.email}</div>
               <div className="mt-1 text-xs text-[var(--text-dim)]">
-                С нами с {user?.createdAt?.slice(0, 10)}
+                {t('settings.memberSince')} {user?.createdAt?.slice(0, 10)}
               </div>
             </div>
           </div>
         </Section>
 
-        <Section title="Единицы измерения" icon={Ruler} delay={0.05}>
+        <Section title={t('settings.units')} icon={Ruler} delay={0.05}>
           <div className="glass flex gap-1 rounded-2xl p-1.5">
-            {([['metric', 'Метрические', '°C · км/ч · мм'], ['imperial', 'Имперские', '°F · mph · in']] as const).map(
+            {([['metric', t('settings.metric'), t('settings.metricHint')], ['imperial', t('settings.imperial'), '°F · mph · in']] as const).map(
               ([key, label, hint]) => (
                 <button
                   key={key}
@@ -137,16 +140,16 @@ export default function SettingsPage() {
           </div>
         </Section>
 
-        <Section title="Пол для «Одеватора»" icon={Shirt} delay={0.08}>
+        <Section title={t('settings.genderTitle')} icon={Shirt} delay={0.08}>
           <p className="mb-3 text-xs leading-relaxed text-[var(--text-dim)]">
-            Определяет, какая 3D-модель показывается в подборе одежды.
+            {t('settings.genderHint')}
             Если не указан — выводятся обе.
           </p>
           <div className="glass flex gap-1 rounded-2xl p-1.5">
             {([
-              ['male', 'Мужской'],
-              ['female', 'Женский'],
-              [null, 'Не указан'],
+              ['male', t('settings.male')],
+              ['female', t('settings.female')],
+              [null, t('settings.unspecified')],
             ] as const).map(([key, label]) => {
               const on = (user?.gender ?? null) === key;
               return (
@@ -169,9 +172,9 @@ export default function SettingsPage() {
           </div>
         </Section>
 
-        <Section title="Оформление" icon={Palette} delay={0.1}>
+        <Section title={t('settings.appearance')} icon={Palette} delay={0.1}>
           <div className="glass flex gap-1 rounded-2xl p-1.5">
-            {([['dark', 'Тёмная'], ['light', 'Светлая']] as const).map(([key, label]) => (
+            {([['dark', t('settings.dark')], ['light', t('settings.light')]] as const).map(([key, label]) => (
               <button
                 key={key}
                 onClick={() => setTheme(key)}
@@ -189,12 +192,12 @@ export default function SettingsPage() {
           </div>
         </Section>
 
-        <Section title="Домашняя локация" icon={Home} delay={0.15}>
+        <Section title={t('settings.homeTitle')} icon={Home} delay={0.15}>
           <div className="flex items-center justify-between gap-4">
             <div className="min-w-0">
-              <div className="text-xs text-[var(--text-dim)]">Сохранённая</div>
-              <div className="truncate font-semibold">{user?.home?.name ?? 'не задана'}</div>
-              <div className="mt-2 text-xs text-[var(--text-dim)]">Текущая</div>
+              <div className="text-xs text-[var(--text-dim)]">{t('settings.savedLabel')}</div>
+              <div className="truncate font-semibold">{user?.home?.name ?? t('settings.notSet')}</div>
+              <div className="mt-2 text-xs text-[var(--text-dim)]">{t('settings.currentLabel')}</div>
               <div className="truncate font-semibold text-aqua-300">{place.name}</div>
             </div>
             <button
@@ -203,12 +206,12 @@ export default function SettingsPage() {
               className="flex shrink-0 items-center gap-2 rounded-2xl bg-gradient-to-r from-aqua-400 to-violet-500 px-5 py-3 text-sm font-bold text-ink-950 transition hover:scale-[1.03] disabled:opacity-60"
             >
               {savingHome ? <Loader2 size={15} className="animate-spin" /> : savedHome ? <Check size={15} /> : null}
-              {savedHome ? 'Сохранено' : 'Сделать домашней'}
+              {savedHome ? t('settings.savedOk') : t('settings.makeHome')}
             </button>
           </div>
         </Section>
 
-        <Section title="Состояние сервиса" icon={Server} delay={0.2}>
+        <Section title={t('settings.serviceStatus')} icon={Server} delay={0.2}>
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="rounded-2xl bg-white/4 p-3">
               <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">API</div>
@@ -218,26 +221,26 @@ export default function SettingsPage() {
               </div>
             </div>
             <div className="rounded-2xl bg-white/4 p-3">
-              <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">Аптайм</div>
+              <div className="text-[10px] uppercase tracking-wider text-[var(--text-dim)]">{t('settings.uptime')}</div>
               <div className="mt-1 font-mono font-semibold">
-                {health ? `${Math.floor(health.uptimeSec / 60)} мин` : '—'}
+                {health ? `${Math.floor(health.uptimeSec / 60)} ${t('units.minute')}` : '—'}
               </div>
             </div>
           </div>
           <p className="mt-3 text-xs leading-relaxed text-[var(--text-dim)]">
-            Источники: Open-Meteo (прогноз, качество воздуха, геокодинг), RainViewer (радар),
+            {t('settings.sources')}
             CARTO + OpenStreetMap (базовая карта).
           </p>
         </Section>
 
-        <Section title="Последняя активность" icon={Activity} delay={0.25}>
+        <Section title={t('settings.lastActivity')} icon={Activity} delay={0.25}>
           <div className="max-h-56 space-y-2 overflow-y-auto pr-1">
             {activity?.length ? (
               activity.map((a, i) => (
                 <div key={i} className="flex items-center gap-3 rounded-xl bg-white/4 px-3 py-2.5 text-sm">
                   <Clock size={13} className="shrink-0 text-[var(--text-dim)]" />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-medium">{KIND_LABELS[a.kind] ?? a.kind}</div>
+                    <div className="truncate font-medium">{KIND_LABELS[a.kind] ? t(KIND_LABELS[a.kind]) : a.kind}</div>
                     {a.detail && <div className="truncate text-xs text-[var(--text-dim)]">{a.detail}</div>}
                   </div>
                   <span className="shrink-0 font-mono text-[10px] text-[var(--text-dim)]">
@@ -246,7 +249,7 @@ export default function SettingsPage() {
                 </div>
               ))
             ) : (
-              <p className="py-4 text-center text-sm text-[var(--text-dim)]">Пока нет событий</p>
+              <p className="py-4 text-center text-sm text-[var(--text-dim)]">{t('settings.noEvents')}</p>
             )}
           </div>
         </Section>
