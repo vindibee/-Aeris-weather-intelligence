@@ -84,7 +84,54 @@ seed();
 const app = express();
 app.set('trust proxy', 1);
 
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+/*
+ * Content-Security-Policy.
+ *
+ * Пока фронт раздавал Vite, заголовки helmet до страницы не доходили и
+ * дефолтный `default-src 'self'` никого не трогал. Как только статику начал
+ * отдавать Express, политика молча сломала всё внешнее: тайлы карты, радар и
+ * скрипт виджета Telegram. Поэтому список источников теперь явный — каждый
+ * пункт здесь оплачен конкретной функцией приложения.
+ */
+const TILES = 'https://tiles.openfreemap.org';
+const RADAR = 'https://tilecache.rainviewer.com';
+
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: {
+    useDefaults: false,
+    directives: {
+      defaultSrc: ["'self'"],
+      baseUri: ["'self'"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'self'"],
+      formAction: ["'self'"],
+
+      // telegram.org — скрипт виджета входа, другого способа его подключить нет
+      scriptSrc: ["'self'", 'https://telegram.org'],
+      scriptSrcAttr: ["'none'"],
+
+      // maplibre собирает воркеры из blob: — без этого карта не рисуется вовсе
+      workerSrc: ["'self'", 'blob:'],
+
+      styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
+      fontSrc: ["'self'", 'https:', 'data:'],
+
+      // картинки с любого https: аватары Telegram приходят с меняющихся
+      // поддоменов их CDN, перечислить их заранее нельзя
+      imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
+
+      // data:/blob: — текстуры и спрайты, которые приложение подгружает
+      // через fetch уже из собственных ресурсов, а не с внешних хостов
+      connectSrc: ["'self'", 'data:', 'blob:', TILES, RADAR],
+
+      // сам виджет входа — iframe с домена Telegram
+      frameSrc: ['https://oauth.telegram.org'],
+
+      upgradeInsecureRequests: [],
+    },
+  },
+}));
 app.use(cors({
   origin: (origin, cb) => cb(null, isAllowedOrigin(origin)),
   credentials: true,
