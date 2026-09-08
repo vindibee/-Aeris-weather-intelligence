@@ -25,9 +25,24 @@ if (IS_PROD && !process.env.CORS_ORIGINS?.trim()) {
   throw new Error('CORS_ORIGINS обязателен в production, например: https://aeris.example.com');
 }
 
+/*
+ * Origin в заголовке браузера — это всегда схема + хост + порт, без пути и без
+ * завершающего слеша. Поэтому значение из переменной приводим к тому же виду:
+ * лишний слеш в конце — самая частая опечатка, и молча ронять из-за неё весь
+ * межсайтовый доступ незачем. А вот схему дописать за пользователя нельзя:
+ * http и https — разные origin'ы, угадывание тут означало бы пустить лишнее.
+ */
 const ORIGINS = (process.env.CORS_ORIGINS ??
   'http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173')
-  .split(',').map((s) => s.trim()).filter(Boolean);
+  .split(',').map((s) => s.trim().replace(/\/+$/, '')).filter(Boolean);
+
+const schemeless = ORIGINS.filter((o) => !/^https?:\/\//.test(o));
+if (schemeless.length) {
+  console.warn(
+    `[cors] в CORS_ORIGINS есть записи без схемы: ${schemeless.join(', ')}. ` +
+    'Браузер шлёт Origin вида https://example.com — такие записи не совпадут никогда.'
+  );
+}
 
 // Vite слушает на 0.0.0.0, поэтому сайт открывается и по адресу машины в
 // локальной сети. Пускаем такие origin'ы на dev/preview-портах, чтобы не
