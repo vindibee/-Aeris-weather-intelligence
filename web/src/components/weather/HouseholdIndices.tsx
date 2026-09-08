@@ -7,7 +7,7 @@ import type { DayPoint, HourPoint } from '../../hooks/useWeather';
 import { useApp } from '../../lib/store';
 import {
   carWashIndex, laundryIndex, petWalkIndex,
-  LEVEL_COLOR, LEVEL_LABEL, type IndexResult,
+  LEVEL_COLOR, LEVEL_LABEL_KEY, type IndexResult,
 } from '../../lib/indices';
 
 /**
@@ -26,6 +26,7 @@ function IndexCard({
   accent: string;
   delay: number;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const color = LEVEL_COLOR[result.level];
 
@@ -56,7 +57,7 @@ function IndexCard({
                 className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
                 style={{ color, background: `${color}1a`, border: `1px solid ${color}44` }}
               >
-                {LEVEL_LABEL[result.level]}
+                {t(LEVEL_LABEL_KEY[result.level])}
               </span>
               <ChevronDown
                 size={15}
@@ -132,6 +133,7 @@ export default function HouseholdIndices({
           precipSum: d.precipSum,
           windMax: d.windMax,
         })),
+        t,
         u
       ),
       laundry: laundryIndex(
@@ -142,6 +144,7 @@ export default function HouseholdIndices({
           precipProb: now?.precipProb ?? days[0]?.precipProb ?? null,
           isDay: !!cur.is_day,
         },
+        t,
         u
       ),
       petWalk: petWalkIndex(
@@ -153,10 +156,11 @@ export default function HouseholdIndices({
           precipProb: now?.precipProb ?? null,
           isDay: !!cur.is_day,
         },
+        t,
         u
       ),
     };
-  }, [data, days, hours, units]);
+  }, [data, days, hours, units, t]);
 
   if (!results) return null;
 
