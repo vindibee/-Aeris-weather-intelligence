@@ -1,4 +1,7 @@
 import 'dotenv/config';
+import { existsSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -88,6 +91,29 @@ app.use('/api/locations', locationsRouter);
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'Маршрут не найден' }));
 
+/*
+ * Раздача собранного фронта тем же процессом.
+ *
+ * Один домен на сайт и API — это не только экономия сервиса на бесплатном
+ * хостинге: пропадает межсайтовость, а с ней и необходимость ослаблять куку
+ * до SameSite=None. В деве статику отдаёт Vite, поэтому здесь она включается
+ * только в проде или явным SERVE_WEB=1.
+ */
+const WEB_DIST = resolve(dirname(fileURLToPath(import.meta.url)), '../../web/dist');
+const SERVE_WEB = (IS_PROD || process.env.SERVE_WEB === '1') && existsSync(WEB_DIST);
+
+if (SERVE_WEB) {
+  // хешированные ассеты кэшируем надолго, index.html — никогда: иначе после
+  // выката пользователь получит старую разметку со ссылками на новые чанки
+  app.use(express.static(WEB_DIST, { index: false, maxAge: '1y' }));
+  app.get('*', (_req, res) => {
+    res.set('Cache-Control', 'no-store');
+    res.sendFile(join(WEB_DIST, 'index.html'));
+  });
+} else if (IS_PROD) {
+  console.warn(`[web] ${WEB_DIST} не найден — сначала выполните npm run build`);
+}
+
 app.use((err, _req, res, _next) => {
   console.error('[api] unhandled:', err);
   res.status(err.status ?? 500).json({ error: err.message ?? 'Внутренняя ошибка сервера' });
@@ -95,5 +121,8 @@ app.use((err, _req, res, _next) => {
 
 app.listen(PORT, () => {
   console.log(`\n  Aeris API  ->  http://localhost:${PORT}/api/health`);
-  console.log(`  CORS       ->  ${ORIGINS.join(', ')} + локальная сеть :5173/:4173\n`);
+  if (SERVE_WEB) console.log(`  Сайт       ->  http://localhost:${PORT}/`);
+  const lan = IS_PROD ? '' : ' + локальная сеть :5173/:4173';
+  console.log(`  CORS       ->  ${ORIGINS.join(', ')}${lan}`);
+  console.log('');
 });

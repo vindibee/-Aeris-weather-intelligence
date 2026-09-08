@@ -1,0 +1,46 @@
+# Развёртывание Aeris одним бесплатным сервисом.
+#
+# Сайт и API живут в одном процессе на одном домене: Express отдаёт собранный
+# web/dist и обслуживает /api. Так расходуется один инстанс из 750 бесплатных
+# часов в месяц (месяц — 744 часа, то есть постоянно работать может ровно одна
+# служба), и заодно не возникает межсайтовых кук.
+services:
+  - type: web
+    name: aeris
+    runtime: node
+    plan: free
+    region: frankfurt
+
+    # --include=dev обязателен: Render выставляет NODE_ENV=production, а npm в
+    # этом режиме пропускает devDependencies — и сборка падает без vite.
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+
+    healthCheckPath: /api/health
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Демо-аккаунт demo@aeris.app / demo1234 — витрина должна открываться без
+      # регистрации. Файловая система бесплатного тарифа эфемерна, поэтому при
+      # каждом рестарте база заводится заново: демо всегда чистое, а чужие
+      # регистрации не накапливаются.
+      - key: SEED_DEMO
+        value: "1"
+
+      # Render сгенерирует случайное значение сам — руками секрет не заводим.
+      - key: JWT_SECRET
+        generateValue: true
+
+      # Оба заполнить после первого деплоя, когда станет известен домен:
+      # https://<имя-сервиса>.onrender.com
+      - key: CORS_ORIGINS
+        sync: false
+      - key: WEB_ORIGIN
+        sync: false
+
+      # Свой ключ с api.nasa.gov: DEMO_KEY даёт 30 запросов в час на весь
+      # сервер, и раздел космической погоды уходит на резервные данные.
+      - key: NASA_API_KEY
+        sync: false
