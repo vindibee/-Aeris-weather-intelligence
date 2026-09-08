@@ -18,10 +18,18 @@ const BOT_USERNAME = process.env.TELEGRAM_BOT_USERNAME || '';
  * BOT_API_SECRET — фактически мастер-ключ: по нему /telegram/issue выдаёт код
  * входа в любой аккаунт. Слабое значение здесь дороже, чем где-либо ещё,
  * поэтому в проде требуем длину, а не полагаемся на добрую волю.
+ *
+ * Пустое значение при этом безопасно и допустимо: сравнение секретов его
+ * никогда не примет, то есть маршрут просто закрыт. Так вход через виджет
+ * Telegram включается сам по себе, без настройки моста с ботом — раньше
+ * требование секрета не давало поднять одно без другого.
  */
 const BOT_SECRET = (process.env.BOT_API_SECRET || '').trim();
-if (process.env.NODE_ENV === 'production' && BOT_TOKEN && BOT_SECRET.length < 32) {
-  throw new Error('BOT_API_SECRET обязателен в production: случайная строка от 32 символов');
+if (process.env.NODE_ENV === 'production' && BOT_SECRET && BOT_SECRET.length < 32) {
+  throw new Error(
+    'BOT_API_SECRET слишком короткий: нужна случайная строка от 32 символов ' +
+    '(или пустое значение, если мост с ботом не используется)'
+  );
 }
 
 /*
