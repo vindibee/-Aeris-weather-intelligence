@@ -36,11 +36,26 @@ const ORIGINS = (process.env.CORS_ORIGINS ??
   'http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173')
   .split(',').map((s) => s.trim().replace(/\/+$/, '')).filter(Boolean);
 
-const schemeless = ORIGINS.filter((o) => !/^https?:\/\//.test(o));
-if (schemeless.length) {
+/*
+ * Проверять «начинается ли на http» недостаточно: строка вида
+ * https://https://example.com этот тест проходит, а совпасть не может никогда.
+ * Поэтому сверяем запись с тем, что из неё выводит URL: настоящий origin —
+ * это ровно схема + хост + порт, и любое расхождение означает опечатку.
+ */
+const brokenOrigins = ORIGINS.filter((o) => {
+  try {
+    const u = new URL(o);
+    return (u.protocol !== 'http:' && u.protocol !== 'https:') || u.origin !== o;
+  } catch {
+    return true;
+  }
+});
+
+if (brokenOrigins.length) {
   console.warn(
-    `[cors] в CORS_ORIGINS есть записи без схемы: ${schemeless.join(', ')}. ` +
-    'Браузер шлёт Origin вида https://example.com — такие записи не совпадут никогда.'
+    `[cors] некорректные записи в CORS_ORIGINS: ${brokenOrigins.join(', ')}. ` +
+    'Ожидается ровно схема, хост и порт — например https://example.com. ' +
+    'Такие записи не совпадут с Origin браузера никогда.'
   );
 }
 
