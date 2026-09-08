@@ -283,7 +283,13 @@ export const api = {
   activity: () =>
     request<{ activity: { kind: string; detail: string | null; created_at: string }[] }>('/auth/activity'),
 
-  geocode: (q: string) => request<{ results: GeoResult[] }>(`/weather/geocode?${query({ q })}`),
+  /*
+   * Язык передаётся явно: open-meteo отдаёт названия городов на любом из
+   * поддерживаемых, а сервер без параметра подставляет русский. Раньше фронт
+   * его не слал, поэтому «Лондон» оставался «Лондоном» и в английском.
+   */
+  geocode: (q: string, lang?: string) =>
+    request<{ results: GeoResult[] }>(`/weather/geocode?${query({ q, lang })}`),
 
   reverse: (lat: number, lon: number) =>
     request<{

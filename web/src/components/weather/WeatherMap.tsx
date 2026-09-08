@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import maplibregl, { type Map as MLMap } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { api, type GridCell, type GridResponse, type RadarFrame } from '../../lib/api';
@@ -45,8 +46,15 @@ function whenStyleReady(map: MLMap, fn: () => void) {
   map.on('idle', run);
 }
 
-/** Prefer Russian place names, falling back to the latin/native ones. */
-function localizeLabels(map: MLMap) {
+/**
+ * Подписи на карте — на языке интерфейса.
+ *
+ * Векторные тайлы несут названия сразу на многих языках в полях вида `name:xx`.
+ * Раньше здесь был жёстко зашит `name:ru`, поэтому карта оставалась русской при
+ * любом выбранном языке. Теперь первым идёт запрошенный язык, а дальше прежняя
+ * цепочка запасных вариантов — не у каждого объекта есть перевод.
+ */
+function localizeLabels(map: MLMap, lang: string) {
   for (const layer of map.getStyle().layers ?? []) {
     if (layer.type !== 'symbol') continue;
     const field = map.getLayoutProperty(layer.id, 'text-field');
@@ -54,7 +62,7 @@ function localizeLabels(map: MLMap) {
     try {
       map.setLayoutProperty(layer.id, 'text-field', [
         'coalesce',
-        ['get', 'name:ru'],
+        ['get', `name:${lang}`],
         ['get', 'name:en'],
         ['get', 'name:latin'],
         ['get', 'name'],
@@ -167,6 +175,14 @@ function sampleWind(grid: GridResponse, lat: number, lon: number): { u: number; 
 export default function WeatherMap({
   center, overlay, showWind, radarFrame, radarOpacity, theme, onPointPick, onGridChange,
 }: Props) {
+  // Инициализация карты происходит один раз и её обработчики живут долго,
+  // поэтому текущий язык держим в ref: замыкание на значение оставило бы их
+  // навсегда с тем языком, который был при монтировании.
+  const { i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? 'ru';
+  const langRef = useRef(lang);
+  langRef.current = lang;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mapRef = useRef<MLMap | null>(null);
@@ -199,7 +215,7 @@ export default function WeatherMap({
 
     map.on('load', () => {
       map.resize();
-      localizeLabels(map);
+      localizeLabels(map, langRef.current);
       setReady(true);
       // Вкладка появляется под анимацией перехода: на момент 'load' контейнер
       // ещё может доезжать до финального размера. Догоняем на следующих кадрах.
@@ -221,7 +237,7 @@ export default function WeatherMap({
       setContextLost(false);
       map.resize();
       whenStyleReady(map, () => {
-        localizeLabels(map);
+        localizeLabels(map, langRef.current);
         drawOverlayRef.current();
       });
     };
@@ -261,13 +277,21 @@ export default function WeatherMap({
     if (!map || !ready) return;
     map.setStyle(STYLE_URL[theme]);
     map.once('styledata', () => {
-      localizeLabels(map);
+      localizeLabels(map, langRef.current);
       gridRef.current = null;
       setReady(true);
       void loadGrid();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme]);
+
+  /* --- language swap --- */
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    // стиль уже загружен, достаточно переписать text-field у слоёв
+    localizeLabels(map, lang);
+  }, [lang, ready]);
 
   /* --- follow the selected place --- */
   useEffect(() => {

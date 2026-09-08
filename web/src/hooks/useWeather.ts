@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { api, type ForecastBundle, type GeoResult, type SavedLocation } from '../lib/api';
 import { useApp } from '../lib/store';
 
@@ -68,9 +69,14 @@ export function useDebounced<T>(value: T, delay = 320): T {
 
 export function useGeocode(term: string) {
   const q = useDebounced(term.trim(), 300);
+  // через useTranslation, а не currentLanguage(): нужен ре-рендер при смене
+  // языка, иначе ключ запроса останется прежним и список не обновится
+  const { i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? 'ru';
   return useQuery<GeoResult[]>({
-    queryKey: ['geocode', q],
-    queryFn: async () => (await api.geocode(q)).results,
+    // язык в ключе: при переключении список городов должен перезапроситься
+    queryKey: ['geocode', q, lang],
+    queryFn: async () => (await api.geocode(q, lang)).results,
     enabled: q.length >= 2,
     staleTime: 60 * 60_000,
   });
